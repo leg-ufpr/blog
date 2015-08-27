@@ -1,0 +1,15 @@
+*~
+.#*
+#*
+*.aux
+*.log
+*.out
+*.nav
+*.toc
+*.snm
+*.Rout
+.Rhistory
+*.html
+*.md
+!README.md
+!CONTRIBUTING.md
