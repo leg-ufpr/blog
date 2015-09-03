@@ -1,0 +1,397 @@
+```{r header, include=FALSE}
+##======================================================================
+## Instalação do R: arquivos binários
+## http://blog.leg.ufpr.br/archives/230
+##                                             Fernando Mayer - LEG UFPR
+##======================================================================
+```
+
+```{r setupknitr, include=FALSE, purl=FALSE}
+## ATTENTION!
+opts_knit$set(
+    base.dir="~/Dropbox/UFPR-LEG/blog/figure",
+    base.url="http://blog.leg.ufpr.br/~fernandomayer/")
+
+opts_chunk$set(
+    ## comment=NA,
+    ## cache=TRUE,
+    message = FALSE,
+    error = FALSE,
+    warning = FALSE,
+    fig.width = 6,
+    fig.height = 6,
+    dpi = 90,
+    dev = "png",
+    dev.args = list(family = "Helvetica"),
+    fig.path = "figure/R_inst_bin-")
+```
+
+O R é um programa para análise estatística de livre distribuição e de
+código aberto. Isso significa que você pode baixar, instalar, repassar
+para seus amigos e até mesmo alterar o código fonte de acordo com suas
+necessidades (desde que mantidas as mesmas liberdades). Ele pode ser
+instalado em diversas arquiteturas e sistemas operacionais diferentes,
+incluindo Windows, Linux, Macintosh e outros.
+
+A instalação do R no Windows é trivial. Basta baixar o arquivo
+executável (`.exe`) da [última versão][], clicar duas vezes e seguir os
+passos para instalação.
+
+A instalação em computadores da plataforma da Apple segue a mesma
+lógica. Basta [baixar o arquivo binário][] com extensão `.pkg`, e
+executar no sistema para inciar a instalação.
+
+Já a instalação em sistemas Linux pode não ser tão trivial mas isso é
+consequência do fato de que existem diversas versões de Linux, e cada
+uma delas possui o seu prórpio sistema de pacotes. Isto também é uma
+consequência natural da natureza aberta (*open source*) do Linux. Cada
+variação de Linux possui sua própria filosofia de como o sistema deve
+funcionar, e de como distribuir pacotes. O que muitas pessoas acham que
+é "confuso" (ter diversas versões diferentes do mesmo sistema), eu acho
+que é uma grande vantagem, pois você tem a liberdade de escolha da
+distribuição que mais satisfaz as suas necessidades.
+
+Com isso, pretendo mostrar como instalar o R a partir dos arquivos
+binários para as principais distribuições Linux e suas variações:
+Debian, Ubuntu/Mint, Fedora e Arch Linux. Se você não sabe o que
+exatemente é um [arquivo binário][], pense nele como se fosse uma
+sequência de bytes (em formato binário, ou seja, apenas com 0 e 1), que
+contém os dados já processados para ser interpretado pelo
+computador. Exemplos de arquivos binários são, `png` (figuras), `odt`
+(documento de texto do LibreOffice), e `pdf`. Para abrir um arquivo
+binário, é necessário um programa adequado para cada tipo de arquivo,
+pois é preciso que exista um programa para interpretar e conseguir
+"decodificar" os dados binários e mostrar a informação armazenada. Esse
+é um dos motivos pelo qual não conseguimos, por exemplo, executar um
+arquivo binário de programa do Windows (`.exe`) no Linux, pois a forma
+de decodificação é totalmente diferente.
+
+O contrário de um arquivo binário é um arquivo de texto, que contém o
+[código fonte][] de um programa (ou documento), ou seja, as instruções
+escritas em alguma linguagem de programação, para gerar algum tipo de
+resultado. Com o código fonte em mãos, e um interpretador adequado (que
+pode ser uma linguagem de programação compilada ou interpretada) é
+possível gerar o resultado final do código fonte (um programa ou
+qualquer outro arquivo). Ao contrário de um arquivo binário, um arquivo
+de código fonte pode ser aberto e visualizado em qualquer editor de
+texto.
+
+Dessa forma, quando dizemos que vamos instalar um arquivo binário,
+significa que vamos usar um arquivo de código fonte que já foi
+processado por algum método de compilação, e obtemos o resultado final
+dessa compilação (no caso, um programa executável). Também é possível
+compilar um programa diretamente do código fonte. Existem certas
+vantagens em se utilizar esta última opção, mas isso é assunto para
+outro post do blog.
+
+Sabendo disso vamos à instalação dos arquivos binários do R para as
+diferentes versões do Linux. Para novos usuários do Linux, é importante
+saber que a forma de baixar e instalar programas é diferente daquela do
+Windows. No Linux, independente da distribuição, existem
+**repositórios**, onde já estão disponíveis milhares de programas
+prontos para serem baixados e instalados. Basta usar alguma ferramenta
+de busca em um programa de gerenciamento de software que você encontrará
+o programa que precisa. É um conceito completamente inverso àquele do
+Windows, onde o usuário precisa "vasculhar" na internet para encontrar
+um arquivo executável, e ainda corre o risco de baixar uma versão não
+oficial, o que pode trazer consequências indesejáveis. No Linux, os
+softwares disponibilizados nos repositórios são chamados de "oficiais",
+pois seguem um determinado padrão, são verificados, e ainda possuem
+atualização automática.
+
+Vamos assumir aqui que o usuário do Linux tem o conhecimento mínimo
+necessário para executar comandos no terminal, e sabe pelo menos mudar
+de diretórios com `cd`, abrir arquivos de texto com um editor como
+`gedit` ou `nano` (ex.: `gedit <arquivo>`), e possui acesso de root ou
+consegue executar comandos com `sudo`.
+
+## Debian
+
+O [Debian][] é uma das distribuições mais antigas e mais utilizadas do
+Linux. O R possui um pacote oficial para o Debian desde 1997 (!). Se
+você usa o Debian sid (*unstable*), não é necessário configurar nada para
+poder instalar a última versão do R. O sistema de gerenciamento de
+programas padrão no Debian é o APT, e para instalar o R, basta fazer em
+um terminal:
+
+```sh
+sudo apt-get install r-base r-base-dev
+```
+
+Este comando irá baixar e instalar o pacote `r-base`, que contém a
+instalação básica do R, e o pacote `r-base-dev` que é necessário para
+instalar pacotes do R. Além disso, todos os demais programas dos quais o
+R depende também serão automaticamente instalados.
+
+Se você usa as versões *stable* (jessie) ou *oldstable* (wheezy) do
+Debian, o procedimento para instalação é o mesmo. No entanto, como estas
+versões são desenvolvidas para serem estáveis, significa que a
+versão dos softwares disponíveis são um pouco defasadas (para garantir
+longos períodos de teste e segurança). Portanto, se quiser utilizar
+sempre a última versão do R (o que é extremamente recomendado), será
+necessário adicionar um repositório direto do CRAN.
+
+Para adicionar um repositório, abra o arquivo `/etc/apt/sources.list`
+com um editor de texto (ex.: `sudo gedit /etc/apt/sources.list`). No
+final do arquivo, insira a seguinte linha:
+
+```
+deb http://cran-r.c3sl.ufpr.br/bin/linux/debian jessie-cran3/
+```
+
+no caso do Debian jessie (*stable*), e para o Debian wheezy
+(*oldstable*), essa linha deve ser:
+
+```
+deb http://cran-r.c3sl.ufpr.br/bin/linux/debian wheezy-cran3/
+```
+
+Após inserir essa linha, salve e feche o arquivo. Para atualizar a lista
+de repositórios, faça:
+
+```sh
+sudo apt-get update
+```
+
+Se no final da atualização aparecer uma mensagem realcionada à chaves de
+segurança, será necessário adicionar as chaves públicas do repositório,
+através do comando:
+
+```sh
+sudo apt-key adv --keyserver keys.gnupg.net --recv-key 381BA480
+```
+
+E execute `sudo apt-get update` novamente. Depois disso, basta instalar
+os pacotes `r-base` e `r-base-dev`, conforme mostrado acima com `sudo
+apt-get install r-base r-base-dev`. Dessa forma, a última versão do R já
+deverá estar disponível. A vantagem de se adicionar o repositório do
+CRAN ao seu sistema é que quando o R atualizar de versão,
+automaticamente você será notificado e poderá fazer a atualização sem
+precisar repetir estes passos.
+
+Para mais detalhes da configuração e instalação do R no Debian veja
+<http://cran-r.c3sl.ufpr.br/bin/linux/debian>.
+
+## Ubuntu/Mint
+
+O [Ubuntu][] é uma distribuição Linux derivada do Debian, e
+possivelmente é uma das mais utilizadas hoje em dia. O [Linux Mint][],
+por sua vez, é uma distribuição baseada no Ubuntu, e também vem sendo
+muito utilizada pela facilidade de instalação e uso. Por serem derivadas
+do Debian, o sistema de instalação e gerenciamento de pacotes é o mesmo
+(APT), o que muda apenas são os repositórios e versões dos programas.
+
+As versões do Ubuntu possuem um ciclo de lançamento de 6 meses, e cada
+versão nova possui um número e um codinome. Por exemplo, a última versão
+(atual) é a 15.04 Vivid Vervet. Mesmo se você usa a última versão do
+Ubuntu, é possível que a versão do R disponível nos repositórios não
+seja a mais atual. Por isso, podemos adicionar um repositório do CRAN
+para poder baixar a última versão, e receber atualizações automáticas. 
+
+Assim como no Debian, para adicionar um repositório, abra o arquivo
+`/etc/apt/sources.list` com um editor de texto (ex.: `sudo gedit
+/etc/apt/sources.list`), e insira a seguinte linha no final do arquivo:
+
+```
+deb https://cran-r.c3sl.ufpr.br/bin/linux/ubuntu vivid/
+```
+
+Salve e feche esse arquivo. Note que a última palavra dessa linha
+corresponde ao primeiro nome do codinome da sua versão do Ubuntu. Se
+você estiver usando outra versão, altere esse nome apropriadamente. Por
+exemplo, para o Ubuntu 14.04 Trusty Tahr, troque `vivid/` por `trusty/`.
+
+> Dica: para ter certeza de qual é a sua versão do Ubuntu, digite no
+> terminal: `lsb_release -sc`.
+
+Após adicionar essa linha, adicione as chaves públicas desse repositório
+com:
+
+```sh
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+```
+
+Esse último comando só é necessário para que o gerenciador de pacotes do
+Ubuntu reconheça esse repositório como seguro. Feito isso, atualize a
+lista de repositórios com
+
+```sh
+sudo apt-get update
+```
+
+E agora já é possível instalar a última versão do R com o pacote
+`r-base`, e o pacote `r-base-dev` com programas complementares:
+
+```sh
+sudo apt-get install r-base r-base-dev
+```
+
+Quando houver uma nova atualização do R, você será automaticamente
+notificado e terá a possibilidade de atualizar sem precisar refazer
+todos estes passos.
+
+Se estiver usando o Linux Mint, o procedimento para inclusão do
+repositório do CRAN e instalação do R é o mesmo como demonstrado para o
+Ubuntu. Inclusive, o nome final da distribuição que vai na linha do
+repositório (como `vivid/` e `trusty/`) é o mesmo do Ubuntu. Você apenas
+tem que conferir em qual versão do Ubuntu é baseada a sua versão do
+Linux Mint, para usar o nome correto. (Isso pode ser conferido no
+próprio arquivo `/etc/apt/sources.list`).
+
+Para mais detalhes sobre a instalação e manutenção do R no Ubuntu e
+Linux Mint, veja
+<http://cran-r.c3sl.ufpr.br/bin/linux/ubuntu/>.
+
+## Fedora
+
+O [Fedora][] é uma distribuição Linux muito popular, principalmente por
+ser a versão aberta de uma das mais antigas distribuições Linux, a
+[Red Hat][] (que atualmente possui apenas uma versão comercial). Assim
+como o Fedora, existem outras distribuições Linux, menos populares,
+baseadas na Red Hat, como por exemplo: [CentOS][], [Scientific Linux][],
+e [Oracle Linux][]. Como todas elas são derivadas de uma única
+distribuição, o sistema de instalação e gerenciamento de pacotes também
+é o mesmo, chamado de RPM (*Red Hat Package Manager*). Isto significa
+que a maneira de instalar o R em qualquer uma destas distribuições
+também é o mesma.
+
+Para instalar o R no Fedora (e derivados), podemos instalar os pacotes
+`R-core` e `R-core-devel`. No entanto, é recomendado que seja instalado
+o meta pacote `R`, que contém os seguintes componentes: `R-core`,
+`R-core-devel`, `R-java`, `libRmath`, `libRmath-devel`. A instalação de
+todos esses pacotes garante o funcionamento completo do R no
+Fedora. Portanto, para instalar o meta pacote `R` fazemos:
+
+```sh
+sudo yum install R
+```
+
+Com isso, atualizações do R deverão ser automaticamente disponíveis pelo
+sistema de gerenciamento de programas do Fedora. Para mais detalhes da
+instalação do R no Fedora/Red Hat veja
+http://cran-r.c3sl.ufpr.br/bin/linux/redhat/README.
+
+## Arch Linux
+
+O [Arch Linux][] é uma distribuição relativamente nova do Linux, e é
+caracterizada por ser uma *rolling release*, ou seja, não existem
+versões de lançamento. Uma vez instalado em uma máquina, o Arch Linux
+será sempre atualizado com as últimas versões de softwares
+disponíveis. O Arch também é caracterizado por ter uma instalação não
+muito trivial, mas atualmente já existem distribuições derivadas, como o
+[Manjaro][] e o [Antergos][], que facilitam a instalação para quem quer
+usar uma distribuição como essa.
+
+O sistema de gerenciamento de programas no Arch Linux e derivados é o
+`pacman`, que baixa e instala programas de repositórios oficiais da
+distribuição. No entanto, no Arch também existe o AUR (*Arch User
+Repository*), que é um repositório de programas "não-oficiais", ou seja,
+onde usuários podem disponibilizar eventuais programas que não estejam
+disponíveis nos repositórios oficiais.
+
+Para instalar o R dos repositórios do Arch, basta fazer:
+
+```sh
+sudo pacman -S r
+```
+
+O pacote `r` já deve instalar a última versão do R. Caso não seja a
+última versão, você tema opção de instalar a versão em desenvolvimento
+do R pelos repositórios do AUR, através de:
+
+```sh
+yaourt -S r-devel
+```
+
+Note que os pacotes instalados pelo AUR são, na verdade, scripts para
+automatizar a tarefa de baixar o código-fonte de um programa e fazer a
+compilação. Por esse motivo, eu recomendo que, se puder, você mesmo deve
+fazer a compilação do R na sua máquina. Esse processo será detalhado em
+outro post aqui no blog.
+
+<!-- links -->
+
+[última versão]: http://cran-r.c3sl.ufpr.br/bin/windows/base/
+[baixar o arquivo binário]: http://cran-r.c3sl.ufpr.br/bin/macosx/
+[arquivo binário]: https://pt.wikipedia.org/wiki/Arquivo_bin%C3%A1rio
+[código fonte]: https://pt.wikipedia.org/wiki/C%C3%B3digo_fonte
+[Debian]: https://www.debian.org/
+[Ubuntu]: http://www.ubuntu.com/
+[Linux Mint]: http://www.linuxmint.com/
+[Fedora]: https://getfedora.org/
+[Red Hat]: http://www.redhat.com
+[CentOS]: https://www.centos.org/
+[Scientific Linux]: https://www.scientificlinux.org/
+[Oracle Linux]: http://www.oracle.com/us/technologies/linux/overview/
+[Arch Linux]: https://www.archlinux.org/
+[Manjaro]: https://manjaro.github.io/
+[Antergos]: http://antergos.com/
+
+<!-- --------------------------------------------------------------- -->
+
+```{r publish, eval=FALSE, include=FALSE, purl=FALSE}
+##-------------------------------------------
+## Compilar e enviar para o blog.
+## ATTENTION!
+
+library(knitr)
+library(RWordPress)
+
+## Nome do arquivo.
+post <- "2015-09-02_R_inst_bin.Rmd"
+
+## Titulo do post.
+title <- "Instalação do R: arquivos binários"
+
+## Categoria(s) e palavras chaves.
+categ <- c("computacional")
+keywd <- c("R", "Linux")
+
+## Sua pasta local, conteúdo a subir para a public_html.
+localpublic <- "~/Dropbox/UFPR-LEG/blog/"
+## Conteudo com figuras
+localpublic.fig <- "~/Dropbox/UFPR-LEG/blog/figure/"
+
+## Forneça senha de usuário do blog.
+pass <- scan(n=1, what=character())
+
+## Digitar porta e depois endereço do servidor (para rsync).
+serv <- scan(n=2, what=character())
+
+##-------------------------------------------
+## Para ver como está ficando.
+
+knit2html(post)
+
+##-------------------------------------------
+## Enviar figuras para a servidora.
+
+## Extraí o código R da matéria.
+cmd <- paste("purl -n", post, "&& mv",
+             sub("md$", "", post), localpublic)
+system(cmd)
+
+## Executa rsync para enviar figuras para o servidor.
+cmd <- paste("rsync -avzh --progress",
+             sprintf("-e \"ssh -p %s\"", serv[1]), localpublic.fig,
+             sprintf("fernandomayer@%s:~/public_html/", serv[2]))
+system(cmd)
+
+##-------------------------------------------
+## Enviar para o blog do leg.
+
+options(WordpressLogin=c(fernandomayer=pass),
+        WordpressURL="http://blog.leg.ufpr.br/xmlrpc.php")
+
+## Usar na primeira vez.
+## knit2wp(post, title=title,
+##         categories=categ, mt_keywords=keywd,
+##         shortcode=FALSE, action="newPost", publish=FALSE)
+
+## Usar quando atualizar o post.
+knit2wp(post, title=title,
+        action="editPost", postid=230,
+        categories=categ, mt_keywords=keywd,
+        shortcode=FALSE, publish=FALSE)
+
+```
