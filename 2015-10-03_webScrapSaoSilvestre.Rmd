@@ -1,7 +1,7 @@
 ```{r header, include=FALSE}
 ##======================================================================
 ## Web scraping dos resultados da São Silvestre de 2013
-## http://blog.leg.ufpr.br/archives/TODO
+## http://blog.leg.ufpr.br/archives/250
 ##                                            Walmes Zeviani - LEG UFPR
 ##======================================================================
 ```
@@ -27,55 +27,50 @@ opts_chunk$set(
 
 ```
 
-Não é novidade que a internet é rica em informação. Textos e mais textos
-sobre tudo. Mas não é só essa informação, em forma de texto, que eu me
-refiro. A internet contém também muita informação crua na forma de
-dados.
+Não é novidade que a internet é rica em informação. Contém textos e mais
+textos sobre tudo. Mas não é só por meio dessa informação, em forma de
+texto, que podemos aprender. A internet contém também muita informação
+crua na forma de dados.
 
-Ao contrário da informação processada, como os textos, a informação crua
-na forma de dados requer coleta e processamento para se transformar em
-informação. Quando os dados estão em uma forma compacta, ou seja, dentro
-de um único arquivo, é só baixá-lo para começar a processar. O problema
-é que muitos dados não estão assim mas de uma maneira bem menos
-acessível.
+Ao contrário dos textos, a informação crua de dados, conjuntos de
+números, requer coleta, processamento e análise para se transformar em
+informação verbal. Quando os dados estão reunidos dentro de um único
+arquivo não existe problema de coleta. Você baixa esse arquivo e começa
+a processar e análisar de imediato. Por outro lado, muitos dados estão
+disponíveis de uma maneira fragmentada e a coleta deles pode ser um
+desafio.
 
-Os resultados das últimas edições da corrida de [São Silvestre]
-(1998-2013) estão disponíveis na web. Para 2013, são tabelas html com 10
-atletas em cada cada (linhas) distribuídas ao longo de centenas de
-páginas. Com os dados fragmentados desse jeito, qualquer iniciativa do
-tipo recorta-e-cola e formatação, algo que muitos usuários de
-planilha eletrônica fazem todos os dias, é abandonada.
+A corrida de [São Silvestre] têm resultados disponíveis na internet
+desde 1998. A partir de 2007, os resultados são centenas de páginas html
+com tabelas de 10 linhas, uma por atleta. Com os dados fragmentados
+desse jeito, qualquer iniciativa do tipo recorta-cola-edita-repete, algo
+que muitos usuários de planilha eletrônica fazem todos os dias, é
+abandonada por ser impraticável, inexequível.
 
-Vamos então para uma solução computacional, afinal, o computador tem que
-trabalhar para nós, e não nós para ele.
+Vou partir para uma solução computacional, afinal, o computador tem que
+trabalhar para mim, e não eu para ele. Vou trabalhar com técnicas de
+web scraping para extrair esse resultados de todas as páginas.
 
-A página com resultados para o masculino de [2013] consiste de um
-cabeçalho e rodapé com informações de situação, botões para mudar de
-página, e a tabela dos os resultados de cada atleta está no centro. As
-10 linhas e 8 colunas que incluem informações como nome, idade e
-tempo para cumprir a prova é tabela que temos que ler.
+As páginas de resultado têm uma estrutura fixa que é mantida em todas.
+Os resultados para o masculino de [2014] consistem de cabeçalho e rodapé
+com informações de situação, botões para mudar de página, e a tabela que
+quero ao centro. Essa têm 10 linhas e 8 colunas que incluem informações
+como nome, idade e tempo para cumprir a prova.
 
-Eu fui visitando páginas. Da primeira fui para a última, depois para a
-número 1000 só para me certificar de que a estrutura era a mesma. Então
-fui para a página 4 (não me pergunte porque essa) para aprender mais
-sobre a tabela de resultados. Usei o *inspecionar elemento* do Firefox
-e encontrei a estrutura na qual (figura abaixo)
+Eu visitei várias páginas para certificar que a estrutura era a mesma.
+Então fui para a página 4 (não me pergunte porque essa) para usar o
+*inspecionar elemento* do Firefox e encontrei a estrutura na qual
+(figura abaixo) a tabela é um elemento html `<table>`, que tem 8
+atributos, como a largura `<witdh='98%'>` e a cor de fundo `<bgcolor>`.
 
-  1. a página atual é a 4,
-  2. os resultados estão dentro um elemento html `<table>`,
-  3. a tabela tem vários atributos,
-  4. como a largura e
-  5. a cor de fundo.
+<img src="http://blog.leg.ufpr.br/~walmes/printScreenSaoSilvestre.png" width='90%'>
 
-<img src="http://blog.leg.ufpr.br/~walmes/printScreenSaoSilvestre.png">
-
-Carrego os pacotes necessários e em seguida, leio a página e decodifico
-ela com `xmlTreeParse()`. O `summary` indica o número de ocorrências de
-cada tipo de elemento/campo html na página. O campo que me interessa é o
-`table` pois é ele que contém os dados que quero. Mas não existe apenas
-um `table` (como eu gostaria) e sendo assim, eu vou ter que ser
-específico ao escrever a minha consulta para trazer a tabela alvo
-ignorando as demais.
+Carreguei os pacotes necessários e li a página para decodificar com
+`xmlTreeParse()`. No `summary` tem-se o número de ocorrências de cada
+tipo de elemento html na página. O campo que me interessa é o `table`
+pois é ele que contém os dados que quero. Mas não existe apenas um
+`table` (como eu gostaria) e sendo assim, eu tive que ser específico ao
+escrever a minha consulta para trazer a tabela alvo ignorando as demais.
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -88,20 +83,28 @@ library(latticeExtra)
 ##----------------------------------------------------------------------
 ## Ler uma página.
 
-## Url para a 4 página dos resultados do masculino em 2013.
-## NOTE: paste0() é para quebrar a linha e evitar de ultrapassar a
+## Url para a 4 página dos resultados do masculino em 2014.
+## NOTE: paste0() é para juntar a linha quebrada evitando ultrapassar a
 ## margem, coisa que procuro sempre evitar.
 url <- paste0("http://www.yescom.com.br",
               "/codigo_comum/classificacao/codigo",
-              "/p_classificacao03_v1.asp?",
-              "evento_yescom_id=1511&tipo=3&tipo_do_evento_id=4128&",
-              "PaginaAtual=4&faixa=&sexo=M&campo=&pesquisa=")
+              "/p_classificacao03_v1.asp",
+              "?evento_yescom_id=1612&tipo=3",
+              "&tipo_do_evento_id=4243",
+              "&PaginaAtual=4",
+              "&faixa=&sexo=M&campo=&pesquisa=")
 
 ## Abre a url no navegador.
 ## browseURL(url)
 
 ## Ler (direto da web).
 pr <- readLines(con=url)
+str(pr)
+
+## Outras opções para ler a página.
+## library(RCurl)
+## system.time(pr <- getURL(url, useragent="curl"))
+## system.time(pr <- getURL(url, useragent="wget"))
 
 ## Não peça para ver no console. Salve em arquivo.
 ## cat(con=pr, file="pg0004.html")                ## Salva em arquivo.
@@ -121,10 +124,10 @@ summary(h)
 Minha primeira tentativa foi tentar a função `XML::readHTMLTable()` que
 extraí as tabelas (`table`) de páginas html. De inicío eu achei que não
 tinha dado muito certo porque ela leu todas as ocorrências de `table`
-deixando em uma lista (`tb`). Para estudar o que eu havia conseguido, eu
-pedi classe e depois dimensão. Nisso ví que tinha um `data.frame` no
-elemento 10 com as dimensões certas, 10 por 8. Era a tabela que eu
-queria.
+deixando em uma lista (`tb`). Para estudar o que eu havia conseguido,
+pedi classe (`class`) e depois dimensão (`dim`). Nisso ví que tinha um
+`data.frame` no elemento 10 com as dimensões certas, 10 por 8. Era a
+tabela que eu queria.
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -146,20 +149,11 @@ O código até aqui já resolveu 1 problema: ler a tabela de uma página. No
 entanto, não vou omitir minhas outras tentativas. Eu procurei um jeito
 de especificar apenas a tabela de resultados que eu queria e consegui
 filtrando para as tabelas que tinham `width='98%'` e `bgcolor`. Essas
-são informações que vieram no inspecionar elementos que fiz.
-
-Quando usei `fun=xmlValue` eu tive o resultado no formato texto: uma
-longa *string* onde predominava `\t` (tabulação) mas que tinha os dados,
-só não era de uma forma pronta. Usando `fun=readHTMLTable` tive o que eu
-queria: um `data.frame` de 10 linhas e 8 colunas.
+são informações que vieram do inspecionar elementos que fiz.
 
 ```{r}
 ##----------------------------------------------------------------------
 ## Fazer uma consulta mais específica.
-
-## nc <- getNodeSet(doc=h,
-##                  path="//table[@width='98%'][@bgcolor]",
-##                  fun=xmlValue)
 
 nc <- getNodeSet(doc=h,
                  path="//table[@width='98%'][@bgcolor]",
@@ -170,10 +164,10 @@ str(tb)
 ```
 
 Temos duas soluções para o problema 1, mas ainda resta o problema 2: ler
-todas as páginas. Facilmente pode ser feito correndo um *loop* no
-intervalo de páginas. Para deixar meu *script* mais interessante e
-praticar um pouco mais, o número total de páginas eu fiz questão de
-extrair. Usei o inspecionar elemento para chegar à espeficicação abaixo.
+todas as páginas. Resolvi correr um *loop* no intervalo de páginas. Para
+deixar meu *script* mais interessante e praticar um pouco mais, o número
+total de páginas eu fiz questão de extrair. Usei o inspecionar elemento
+para chegar à espeficicação abaixo.
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -188,15 +182,23 @@ last
 
 ```
 
-Para ler as `r last` páginas, eu preciso conhecer os respectivos
-endereços. Felizmente, o endereço para cada página contém o seu número
+Para ler as `r last` páginas, eu precisei preparar os
+endereços. Felizmente, o endereço de cada página contém o seu número
 (`PaginaAtual=`) e eu só precisei alterá-lo. Criei uma função
-(`getTable`), que ao receber o link (url), executa os passos: decofifica
+(`getTable`), que ao receber o link (url), executa os passos: decodifica
 a página, extraí a tabela e escreve num arquivo texto, acrescentando
-novas linhas (`append=TRUE`) ao arquivo. Eu incluí uma opção de
-`verbose` para ter algum *status* de evolução do processo, algo que foi
-útil enquanto eu fazia a função. No laço `for` que faz a extração dos
-dados, eu incluí um indicador de progresso modo texto.
+novas linhas (`append=TRUE`). Eu incluí uma opção de `verbose` para ter
+algum *status* de evolução do processo, algo que foi útil enquanto eu
+fazia a função. No laço `for` que faz a extração dos dados, eu incluí um
+indicador de progresso modo texto.
+
+O sexo também é parte do endereço (`sexo=`) então resolvi ler os
+dois. Algo inesperado aconteceu quando eu experimentei a leitura com
+poucas páginas. O que difere na url para masculino e feminino, nos
+resultados gerais, não é o `sexo=M` e `sexo=F` que eu esperava mas o
+`tipo=4` e `tipo=3`. Independente do sexo, as urls têm
+`sexo=M`. Esquisito, não é mesmo? Mas nos resultados por faixa etária o
+`sexo=F` aparece.
 
 ```{r, eval=FALSE}
 ##----------------------------------------------------------------------
@@ -205,14 +207,17 @@ dados, eu incluí um indicador de progresso modo texto.
 url0 <- paste0("http://www.yescom.com.br",
                "/codigo_comum/classificacao/codigo",
                "/p_classificacao03_v1.asp?",
-               "evento_yescom_id=1511&tipo=3&tipo_do_evento_id=4128&",
-               "PaginaAtual=%d", ## <-- %d
-               "&faixa=&sexo=M&campo=&pesquisa=")
-urls <- sprintf(fmt=url0, 1:last)
+               "evento_yescom_id=1511",
+               "&tipo=%d",        ## <-- indica o sexo
+               "&tipo_do_evento_id=4128&",
+               "PaginaAtual=%d",  ## <-- %d para página
+               "&faixa=&sexo=M",  ## <-- %s para sexo
+               "&campo=&pesquisa=")
 
 getTable <- function(url, verbose=TRUE){
     t0 <- Sys.time()
-    pr <- readLines(con=url)
+    ## pr <- readLines(con=url)
+    pr <- getURL(url, useragent="wget")
     h <- htmlTreeParse(file=pr, asText=TRUE,
                        useInternalNodes=TRUE,
                        encoding="utf-8")
@@ -239,12 +244,23 @@ getTable <- function(url, verbose=TRUE){
     invisible(NULL)
 }
 
-filename <- "saoSilvestre2013.csv"
-file.remove(filename)
+filename <- "saoSilvestre2014.csv"
+if (file.exists(filename)){
+    file.remove(filename)
+}
+
 pb <- txtProgressBar(min=1, max=last, style=3)
-for (u in 1:last){
-    getTable(urls[u], verbose=FALSE)
-    setTxtProgressBar(pb, u)
+for (i in 1:last){
+    url <- sprintf(fmt=url0, 3, i)
+    getTable(url, verbose=FALSE)
+    setTxtProgressBar(pb, i)
+}
+last <- 626
+pb <- txtProgressBar(min=1, max=last, style=3)
+for (i in 527:last){
+    url <- sprintf(fmt=url0, 4, i)
+    getTable(url, verbose=FALSE)
+    setTxtProgressBar(pb, i)
 }
 
 file.info(filename)
@@ -255,7 +271,7 @@ file.info(filename)
 ```
 
 O que domina o tempo para concluir a tarefa é a velocidade de conexão
-com a internet. O processo levou 20 minutos.
+com a internet. O processo levou 30 minutos.
 
 O objetivo dessa matéria foi mostrar como extrair esses dados de página
 html. Agora que temos os dados, vamos só fazer um acabamento: ler os
@@ -266,7 +282,7 @@ cima, um pouco sobre eles.
 ##----------------------------------------------------------------------
 ## Lê o arquivo texto gerado.
 
-dtfr <- read.table("saoSilvestre2013.csv",
+dtfr <- read.table("saoSilvestre2014.csv",
                    header=FALSE, sep=";",
                    stringsAsFactors=FALSE)
 names(dtfr) <- c("class", "num", "atl", "idade",
@@ -277,7 +293,7 @@ dtfr$tmp <- as.POSIXct(dtfr$tmp, format="%H:%M:%S")-
 units(dtfr$tmp) <- "mins"
 dtfr$tmp <- as.numeric(dtfr$tmp)
 
-str(dtfr)
+head(dtfr)
 
 ## Diagrama de dispersão do tempo de prova contra a idade.
 xyplot(tmp~idade, data=dtfr,
@@ -294,17 +310,17 @@ ecdfplot(~tmp|fxet, data=dtfr, as.table=TRUE,
 
 ```
 
-Você pode adaptar esse *script* para os resultados de outros anos da São
-Silvestre. No entanto, se você visitar os outros links, vai perceber que
-os resultados em html começaram em 2007 e que mantiveram o padrão
-estrutural. Por outro lado, antes de 2007, eles eram divulgados em
-formato texto de comprimento fixo e cada ano tinha uma estrutura
-diferente. Para ler os últimos, que não são html mas texto, você pode
-usar a `read.fwf()`, mas antes é preciso eliminar linhas de cabeçalho e
-rodapé.
+Você pode adaptar esse *script* ([webScrapSaoSilvestre.R]) para os
+resultados de outros anos da São Silvestre. No entanto, se você visitar
+os outros links, vai perceber que os resultados em html começaram em
+2007 e que mantiveram o padrão estrutural. Por outro lado, antes de
+2007, eles eram divulgados em formato texto de comprimento fixo e cada
+ano tinha uma estrutura diferente. Para ler os últimos, você pode usar a
+`read.fwf()`.
 
 [São Silvestre]: http://www.saosilvestre.com.br/resultados/
-[2013]: http://www.yescom.com.br/codigo_comum/classificacao/codigo/p_classificacao03_v1.asp?tipo_do_evento_id=4128&tipo=3&evento_yescom_id=1511
+[2014]: http://www.yescom.com.br/codigo_comum/classificacao/codigo/p_classificacao03_v1.asp?evento_yescom_id=1612&tipo=3&tipo_do_evento_id=4243&PaginaAtual=1&faixa=&sexo=M&campo=&pesquisa=
+[webScrapSaoSilvestre.R]: http://blog.leg.ufpr.br/~walmes/public/2015-10-03_webScrapSaoSilvestre.R
 
 <!-- --------------------------------------------------------------- -->
 
