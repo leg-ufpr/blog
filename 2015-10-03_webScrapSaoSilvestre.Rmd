@@ -1,0 +1,379 @@
+```{r header, include=FALSE}
+##======================================================================
+## Web scraping dos resultados da São Silvestre de 2013
+## http://blog.leg.ufpr.br/archives/TODO
+##                                            Walmes Zeviani - LEG UFPR
+##======================================================================
+```
+
+```{r setupknitr, include=FALSE, purl=FALSE}
+## ATTENTION!
+opts_knit$set(
+    base.dir="/home/walmes/Dropbox/blog/public/",
+    base.url="http://blog.leg.ufpr.br/~walmes/public/")
+
+opts_chunk$set(
+    ## comment=NA,
+    ## cache=TRUE,
+    message=FALSE,
+    error=FALSE,
+    warning=FALSE,
+    fig.width=6,
+    fig.height=6,
+    dpi=90,
+    dev="png",
+    dev.args=list(family="Helvetica"),
+    fig.path="webScrapSaoSilvestre-")
+
+```
+
+Não é novidade que a internet é rica em informação. Textos e mais textos
+sobre tudo. Mas não é só essa informação, em forma de texto, que eu me
+refiro. A internet contém também muita informação crua na forma de
+dados.
+
+Ao contrário da informação processada, como os textos, a informação crua
+na forma de dados requer coleta e processamento para se transformar em
+informação. Quando os dados estão em uma forma compacta, ou seja, dentro
+de um único arquivo, é só baixá-lo para começar a processar. O problema
+é que muitos dados não estão assim mas de uma maneira bem menos
+acessível.
+
+Os resultados das últimas edições da corrida de [São Silvestre]
+(1998-2013) estão disponíveis na web. Para 2013, são tabelas html com 10
+atletas em cada cada (linhas) distribuídas ao longo de centenas de
+páginas. Com os dados fragmentados desse jeito, qualquer iniciativa do
+tipo recorta-e-cola e formatação, algo que muitos usuários de
+planilha eletrônica fazem todos os dias, é abandonada.
+
+Vamos então para uma solução computacional, afinal, o computador tem que
+trabalhar para nós, e não nós para ele.
+
+A página com resultados para o masculino de [2013] consiste de um
+cabeçalho e rodapé com informações de situação, botões para mudar de
+página, e a tabela dos os resultados de cada atleta está no centro. As
+10 linhas e 8 colunas que incluem informações como nome, idade e
+tempo para cumprir a prova é tabela que temos que ler.
+
+Eu fui visitando páginas. Da primeira fui para a última, depois para a
+número 1000 só para me certificar de que a estrutura era a mesma. Então
+fui para a página 4 (não me pergunte porque essa) para aprender mais
+sobre a tabela de resultados. Usei o *inspecionar elemento* do Firefox
+e encontrei a estrutura na qual (figura abaixo)
+
+  1. a página atual é a 4,
+  2. os resultados estão dentro um elemento html `<table>`,
+  3. a tabela tem vários atributos,
+  4. como a largura e
+  5. a cor de fundo.
+
+<img src="http://blog.leg.ufpr.br/~walmes/printScreenSaoSilvestre.png">
+
+Carrego os pacotes necessários e em seguida, leio a página e decodifico
+ela com `xmlTreeParse()`. O `summary` indica o número de ocorrências de
+cada tipo de elemento/campo html na página. O campo que me interessa é o
+`table` pois é ele que contém os dados que quero. Mas não existe apenas
+um `table` (como eu gostaria) e sendo assim, eu vou ter que ser
+específico ao escrever a minha consulta para trazer a tabela alvo
+ignorando as demais.
+
+```{r}
+##----------------------------------------------------------------------
+## Pacotes necessários.
+
+library(XML)
+library(lattice)
+library(latticeExtra)
+
+##----------------------------------------------------------------------
+## Ler uma página.
+
+## Url para a 4 página dos resultados do masculino em 2013.
+## NOTE: paste0() é para quebrar a linha e evitar de ultrapassar a
+## margem, coisa que procuro sempre evitar.
+url <- paste0("http://www.yescom.com.br",
+              "/codigo_comum/classificacao/codigo",
+              "/p_classificacao03_v1.asp?",
+              "evento_yescom_id=1511&tipo=3&tipo_do_evento_id=4128&",
+              "PaginaAtual=4&faixa=&sexo=M&campo=&pesquisa=")
+
+## Abre a url no navegador.
+## browseURL(url)
+
+## Ler (direto da web).
+pr <- readLines(con=url)
+
+## Não peça para ver no console. Salve em arquivo.
+## cat(con=pr, file="pg0004.html")                ## Salva em arquivo.
+## download.file(url=url, destfile="pg0004.html") ## Ou baixa direto.
+
+##----------------------------------------------------------------------
+## Examina e decodifica.
+
+h <- htmlTreeParse(file=pr, asText=TRUE,
+                   useInternalNodes=TRUE, encoding="utf-8")
+
+## Ocorrência de cada typo de elemento.
+summary(h)
+
+```
+
+Minha primeira tentativa foi tentar a função `XML::readHTMLTable()` que
+extraí as tabelas (`table`) de páginas html. De inicío eu achei que não
+tinha dado muito certo porque ela leu todas as ocorrências de `table`
+deixando em uma lista (`tb`). Para estudar o que eu havia conseguido, eu
+pedi classe e depois dimensão. Nisso ví que tinha um `data.frame` no
+elemento 10 com as dimensões certas, 10 por 8. Era a tabela que eu
+queria.
+
+```{r}
+##----------------------------------------------------------------------
+## Lê as tabelas (<table>) de uma página html.
+
+tb <- readHTMLTable(h, header=TRUE,
+                    stringsAsFactors=FALSE,
+                    as.data.frame=TRUE)
+length(tb)
+## sapply(tb, class)
+## sapply(tb, dim)
+
+## A tabela que eu quero.
+tb[[10]]
+
+```
+
+O código até aqui já resolveu 1 problema: ler a tabela de uma página. No
+entanto, não vou omitir minhas outras tentativas. Eu procurei um jeito
+de especificar apenas a tabela de resultados que eu queria e consegui
+filtrando para as tabelas que tinham `width='98%'` e `bgcolor`. Essas
+são informações que vieram no inspecionar elementos que fiz.
+
+Quando usei `fun=xmlValue` eu tive o resultado no formato texto: uma
+longa *string* onde predominava `\t` (tabulação) mas que tinha os dados,
+só não era de uma forma pronta. Usando `fun=readHTMLTable` tive o que eu
+queria: um `data.frame` de 10 linhas e 8 colunas.
+
+```{r}
+##----------------------------------------------------------------------
+## Fazer uma consulta mais específica.
+
+## nc <- getNodeSet(doc=h,
+##                  path="//table[@width='98%'][@bgcolor]",
+##                  fun=xmlValue)
+
+nc <- getNodeSet(doc=h,
+                 path="//table[@width='98%'][@bgcolor]",
+                 fun=readHTMLTable, stringsAsFactors=FALSE)
+tb <- nc[[1]]
+str(tb)
+
+```
+
+Temos duas soluções para o problema 1, mas ainda resta o problema 2: ler
+todas as páginas. Facilmente pode ser feito correndo um *loop* no
+intervalo de páginas. Para deixar meu *script* mais interessante e
+praticar um pouco mais, o número total de páginas eu fiz questão de
+extrair. Usei o inspecionar elemento para chegar à espeficicação abaixo.
+
+```{r}
+##----------------------------------------------------------------------
+## Qual o número total de páginas?
+
+## <span class="FontVermelha">1745</span>
+pges <- xpathApply(doc=h,
+                   path="//span[@class='FontVermelha']",
+                   fun=xmlValue)
+last <- max(as.numeric(unlist(pges)))
+last
+
+```
+
+Para ler as `r last` páginas, eu preciso conhecer os respectivos
+endereços. Felizmente, o endereço para cada página contém o seu número
+(`PaginaAtual=`) e eu só precisei alterá-lo. Criei uma função
+(`getTable`), que ao receber o link (url), executa os passos: decofifica
+a página, extraí a tabela e escreve num arquivo texto, acrescentando
+novas linhas (`append=TRUE`) ao arquivo. Eu incluí uma opção de
+`verbose` para ter algum *status* de evolução do processo, algo que foi
+útil enquanto eu fazia a função. No laço `for` que faz a extração dos
+dados, eu incluí um indicador de progresso modo texto.
+
+```{r, eval=FALSE}
+##----------------------------------------------------------------------
+## Cria todos os endereços que serão lidos.
+
+url0 <- paste0("http://www.yescom.com.br",
+               "/codigo_comum/classificacao/codigo",
+               "/p_classificacao03_v1.asp?",
+               "evento_yescom_id=1511&tipo=3&tipo_do_evento_id=4128&",
+               "PaginaAtual=%d", ## <-- %d
+               "&faixa=&sexo=M&campo=&pesquisa=")
+urls <- sprintf(fmt=url0, 1:last)
+
+getTable <- function(url, verbose=TRUE){
+    t0 <- Sys.time()
+    pr <- readLines(con=url)
+    h <- htmlTreeParse(file=pr, asText=TRUE,
+                       useInternalNodes=TRUE,
+                       encoding="utf-8")
+    nc <- getNodeSet(doc=h,
+                     path="//table[@width='98%'][@bgcolor]",
+                     fun=readHTMLTable,
+                     stringsAsFactors=FALSE)
+    tb <- nc[[1]]
+    if (verbose){
+        cat("Reading a page...\n")
+        t1 <- Sys.time()
+        tdiff <- t1-t0
+        units(tdiff) <- "secs"
+        cat("Elapsed: ", c(tdiff), " secs\n")
+    }
+    write.table(x=tb,
+                file=filename,
+                append=TRUE,
+                quote=FALSE,
+                sep=";",
+                fileEncoding="utf-8",
+                row.names=FALSE,
+                col.names=FALSE)
+    invisible(NULL)
+}
+
+filename <- "saoSilvestre2013.csv"
+file.remove(filename)
+pb <- txtProgressBar(min=1, max=last, style=3)
+for (u in 1:last){
+    getTable(urls[u], verbose=FALSE)
+    setTxtProgressBar(pb, u)
+}
+
+file.info(filename)
+
+## Poderia usar um *apply também.
+## invisible(lapply(urls, FUN=getTable, verbose=TRUE))
+
+```
+
+O que domina o tempo para concluir a tarefa é a velocidade de conexão
+com a internet. O processo levou 20 minutos.
+
+O objetivo dessa matéria foi mostrar como extrair esses dados de página
+html. Agora que temos os dados, vamos só fazer um acabamento: ler os
+dados para certificar a integridade/qualidade e conhecer, mesmo que por
+cima, um pouco sobre eles.
+
+```{r}
+##----------------------------------------------------------------------
+## Lê o arquivo texto gerado.
+
+dtfr <- read.table("saoSilvestre2013.csv",
+                   header=FALSE, sep=";",
+                   stringsAsFactors=FALSE)
+names(dtfr) <- c("class", "num", "atl", "idade",
+                 "fxet", "eqp", "tmp", "tmpl")
+
+dtfr$tmp <- as.POSIXct(dtfr$tmp, format="%H:%M:%S")-
+    as.POSIXct("00:00:00", format="%H:%M:%S")
+units(dtfr$tmp) <- "mins"
+dtfr$tmp <- as.numeric(dtfr$tmp)
+
+str(dtfr)
+
+## Diagrama de dispersão do tempo de prova contra a idade.
+xyplot(tmp~idade, data=dtfr,
+       ylab="Tempo para concluir a prova (min)",
+       xlab="Idade do atleta (anos)")
+
+densityplot(~tmp|fxet, data=dtfr, as.table=TRUE,
+            xlab="Tempo para concluir a prova (min)",
+            ylab="Densidade")
+
+ecdfplot(~tmp|fxet, data=dtfr, as.table=TRUE,
+         xlab="Tempo para concluir a prova (min)",
+         ylab="Distribuição de frequências relativas acumulada")
+
+```
+
+Você pode adaptar esse *script* para os resultados de outros anos da São
+Silvestre. No entanto, se você visitar os outros links, vai perceber que
+os resultados em html começaram em 2007 e que mantiveram o padrão
+estrutural. Por outro lado, antes de 2007, eles eram divulgados em
+formato texto de comprimento fixo e cada ano tinha uma estrutura
+diferente. Para ler os últimos, que não são html mas texto, você pode
+usar a `read.fwf()`, mas antes é preciso eliminar linhas de cabeçalho e
+rodapé.
+
+[São Silvestre]: http://www.saosilvestre.com.br/resultados/
+[2013]: http://www.yescom.com.br/codigo_comum/classificacao/codigo/p_classificacao03_v1.asp?tipo_do_evento_id=4128&tipo=3&evento_yescom_id=1511
+
+<!-- --------------------------------------------------------------- -->
+
+```{r publish, eval=FALSE, include=FALSE, purl=FALSE}
+##-------------------------------------------
+## Compilar e enviar para o blog.
+## ATTENTION!
+
+library(knitr)
+library(RWordPress)
+
+## Nome do arquivo.
+post <- "2015-10-03_webScrapSaoSilvestre.Rmd"
+
+## Titulo do post.
+title <- "Web scraping da Corrida de São Silvestre"
+
+## Categoria(s) e palavras chaves.
+categ <- c("computacional")
+keywd <- c("xml")
+
+## Sua pasta local, conteúdo a subir para a public_html.
+localpublic <- "/home/walmes/Dropbox/blog/public"
+
+## Forneça senha de usuário do blog.
+pass <- scan(n=1, what=character())
+
+## Digitar porta e depois endereço do servidor (para rsync).
+serv <- scan(n=2, what=character())
+
+##-------------------------------------------
+## Para ver como está ficando.
+
+knit2html(post)
+
+##-------------------------------------------
+## Enviar figuras para a servidora.
+
+## Extraí o código R da matéria.
+cmd <- paste("purl -n", post, "&& mv",
+             sub("md$", "", post), localpublic)
+system(cmd)
+
+## Executa rsync para enviar figuras para o servidor.
+cmd <- paste("rsync -avzh --progress --delete",
+             sprintf("-e \"ssh -p %s\"", serv[1]), localpublic,
+             sprintf("walmes@%s:/home/walmes/public_html/", serv[2]))
+system(cmd)
+
+##-------------------------------------------
+## Enviar para o blog do leg.
+
+options(WordpressLogin=c(walmes=pass),
+        WordpressURL="http://blog.leg.ufpr.br/xmlrpc.php")
+
+source("http://git.leg.ufpr.br/leg/legTools/raw/master/R/knit2wpCrayon.R")
+
+## Usar na primeira vez.
+## knit2wpCrayon(post, title=title,
+##               action="newPost",
+##               categories=categ, mt_keywords=keywd,
+##               write=FALSE, upload=TRUE,
+##               publish=FALSE)
+
+## Usar quando atualizar o post.
+knit2wpCrayon(post, title=title,
+              action="editPost", postid=250,
+              categories=categ, mt_keywords=keywd,
+              write=FALSE, upload=TRUE,
+              publish=FALSE)
+
+```
