@@ -34,27 +34,35 @@ crua na forma de dados.
 
 Ao contrário dos textos, a informação crua de dados, conjuntos de
 números, requer coleta, processamento e análise para se transformar em
-informação verbal. Quando os dados estão reunidos dentro de um único
-arquivo não existe problema de coleta. Você baixa esse arquivo e começa
-a processar e análisar de imediato. Por outro lado, muitos dados estão
-disponíveis de uma maneira fragmentada e a coleta deles pode ser um
-desafio.
+informação verbal. Quando os dados estão reunidos, e.g. dentro de um
+único arquivo, não existe problema de coleta. Você baixa esse arquivo e
+começa a processar e analisar de imediato. Por outro lado, muitos dados
+estão disponíveis de uma maneira fragmentada e a coleta deles pode ser
+um desafio.
 
 A corrida de [São Silvestre] têm resultados disponíveis na internet
 desde 1998. A partir de 2007, os resultados são centenas de páginas html
-com tabelas de 10 linhas, uma por atleta. Com os dados fragmentados
-desse jeito, qualquer iniciativa do tipo recorta-cola-edita-repete, algo
-que muitos usuários de planilha eletrônica fazem todos os dias, é
-abandonada por ser impraticável, inexequível.
+com tabelas de 10 linhas, uma linha por atleta. Com os dados
+fragmentados desse jeito, qualquer iniciativa do tipo
+recorta-cola-edita-repete, algo que muitos usuários de planilha
+eletrônica fazem todos os dias, é abandonada por ser impraticável,
+inexequível.
 
 Vou partir para uma solução computacional, afinal, o computador tem que
-trabalhar para mim, e não eu para ele. Vou trabalhar com técnicas de
-web scraping para extrair esse resultados de todas as páginas.
+trabalhar para mim, e não eu para ele. Vou trabalhar com técnicas de web
+scraping para extrair esse resultados de todas as páginas.
+
+Programar é algo que eu gosto, pois apredendo e também exercito o que já
+sei. Na pior das hipóteses, posso passar horas programando essa solução,
+mas certamente será menos tempo do que fazer a terefa manualmente, algo
+repetitivo e que não acrescenta conhecimento algum. Na melhor das
+hipóteses, posso usar minha rotina para outras páginas e compartilhar
+com outras pessoas (com você que está lendo essa matéria).
 
 As páginas de resultado têm uma estrutura fixa que é mantida em todas.
-Os resultados para o masculino de [2014] consistem de cabeçalho e rodapé
+Os resultados para o masculino de [2013] consistem de cabeçalho e rodapé
 com informações de situação, botões para mudar de página, e a tabela que
-quero ao centro. Essa têm 10 linhas e 8 colunas que incluem informações
+quero no meio. Essa têm 10 linhas e 8 colunas que incluem informações
 como nome, idade e tempo para cumprir a prova.
 
 Eu visitei várias páginas para certificar que a estrutura era a mesma.
@@ -83,14 +91,14 @@ library(latticeExtra)
 ##----------------------------------------------------------------------
 ## Ler uma página.
 
-## Url para a 4 página dos resultados do masculino em 2014.
+## Url para a 4 página dos resultados do masculino em 2013.
 ## NOTE: paste0() é para juntar a linha quebrada evitando ultrapassar a
 ## margem, coisa que procuro sempre evitar.
 url <- paste0("http://www.yescom.com.br",
               "/codigo_comum/classificacao/codigo",
               "/p_classificacao03_v1.asp",
-              "?evento_yescom_id=1612&tipo=3",
-              "&tipo_do_evento_id=4243",
+              "?evento_yescom_id=1511&tipo=3",
+              "&tipo_do_evento_id=4128",
               "&PaginaAtual=4",
               "&faixa=&sexo=M&campo=&pesquisa=")
 
@@ -122,10 +130,10 @@ summary(h)
 ```
 
 Minha primeira tentativa foi tentar a função `XML::readHTMLTable()` que
-extraí as tabelas (`table`) de páginas html. De inicío eu achei que não
+extraí as tabelas (`table`) de páginas html. De início eu achei que não
 tinha dado muito certo porque ela leu todas as ocorrências de `table`
 deixando em uma lista (`tb`). Para estudar o que eu havia conseguido,
-pedi classe (`class`) e depois dimensão (`dim`). Nisso ví que tinha um
+pedi classe (`class`) e depois dimensão (`dim`). Nisso vi que tinha um
 `data.frame` no elemento 10 com as dimensões certas, 10 por 8. Era a
 tabela que eu queria.
 
@@ -149,7 +157,8 @@ O código até aqui já resolveu 1 problema: ler a tabela de uma página. No
 entanto, não vou omitir minhas outras tentativas. Eu procurei um jeito
 de especificar apenas a tabela de resultados que eu queria e consegui
 filtrando para as tabelas que tinham `width='98%'` e `bgcolor`. Essas
-são informações que vieram do inspecionar elementos que fiz.
+são informações que vieram do inspecionar elemento que fiz (ver
+imagem). Note como fazer para especificar dois atributos.
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -167,7 +176,7 @@ Temos duas soluções para o problema 1, mas ainda resta o problema 2: ler
 todas as páginas. Resolvi correr um *loop* no intervalo de páginas. Para
 deixar meu *script* mais interessante e praticar um pouco mais, o número
 total de páginas eu fiz questão de extrair. Usei o inspecionar elemento
-para chegar à espeficicação abaixo.
+para chegar à especificação abaixo.
 
 ```{r}
 ##----------------------------------------------------------------------
@@ -189,14 +198,14 @@ endereços. Felizmente, o endereço de cada página contém o seu número
 a página, extraí a tabela e escreve num arquivo texto, acrescentando
 novas linhas (`append=TRUE`). Eu incluí uma opção de `verbose` para ter
 algum *status* de evolução do processo, algo que foi útil enquanto eu
-fazia a função. No laço `for` que faz a extração dos dados, eu incluí um
-indicador de progresso modo texto.
+fazia a função. Também incluí um indicador de progresso modo texto no
+laço `for` que faz a extração dos dados.
 
 O sexo também é parte do endereço (`sexo=`) então resolvi ler os
 dois. Algo inesperado aconteceu quando eu experimentei a leitura com
 poucas páginas. O que difere na url para masculino e feminino, nos
 resultados gerais, não é o `sexo=M` e `sexo=F` que eu esperava mas o
-`tipo=4` e `tipo=3`. Independente do sexo, as urls têm
+`tipo=3` e `tipo=4`. Independente do sexo, as urls têm
 `sexo=M`. Esquisito, não é mesmo? Mas nos resultados por faixa etária o
 `sexo=F` aparece.
 
@@ -206,17 +215,15 @@ resultados gerais, não é o `sexo=M` e `sexo=F` que eu esperava mas o
 
 url0 <- paste0("http://www.yescom.com.br",
                "/codigo_comum/classificacao/codigo",
-               "/p_classificacao03_v1.asp?",
-               "evento_yescom_id=1511",
-               "&tipo=%d",        ## <-- indica o sexo
-               "&tipo_do_evento_id=4128&",
-               "PaginaAtual=%d",  ## <-- %d para página
-               "&faixa=&sexo=M",  ## <-- %s para sexo
-               "&campo=&pesquisa=")
+               "/p_classificacao03_v1.asp",
+               "?evento_yescom_id=1511&tipo=%d",         ## sexo=tipo
+               "&tipo_do_evento_id=4128&PaginaAtual=%d", ## página
+               "&faixa=&sexo=M&campo=&pesquisa=")
 
 getTable <- function(url, verbose=TRUE){
     t0 <- Sys.time()
     ## pr <- readLines(con=url)
+    library(RCurl)
     pr <- getURL(url, useragent="wget")
     h <- htmlTreeParse(file=pr, asText=TRUE,
                        useInternalNodes=TRUE,
@@ -244,7 +251,7 @@ getTable <- function(url, verbose=TRUE){
     invisible(NULL)
 }
 
-filename <- "saoSilvestre2014.csv"
+filename <- "saoSilvestre2013.csv"
 if (file.exists(filename)){
     file.remove(filename)
 }
@@ -255,9 +262,9 @@ for (i in 1:last){
     getTable(url, verbose=FALSE)
     setTxtProgressBar(pb, i)
 }
-last <- 626
+last <- 526 ## Total de páginas do femínino.
 pb <- txtProgressBar(min=1, max=last, style=3)
-for (i in 527:last){
+for (i in 1:last){
     url <- sprintf(fmt=url0, 4, i)
     getTable(url, verbose=FALSE)
     setTxtProgressBar(pb, i)
@@ -271,7 +278,7 @@ file.info(filename)
 ```
 
 O que domina o tempo para concluir a tarefa é a velocidade de conexão
-com a internet. O processo levou 30 minutos.
+com a internet. O processo levou 15 minutos com conexão cabeada.
 
 O objetivo dessa matéria foi mostrar como extrair esses dados de página
 html. Agora que temos os dados, vamos só fazer um acabamento: ler os
@@ -282,7 +289,7 @@ cima, um pouco sobre eles.
 ##----------------------------------------------------------------------
 ## Lê o arquivo texto gerado.
 
-dtfr <- read.table("saoSilvestre2014.csv",
+dtfr <- read.table("saoSilvestre2013.csv",
                    header=FALSE, sep=";",
                    stringsAsFactors=FALSE)
 names(dtfr) <- c("class", "num", "atl", "idade",
@@ -293,18 +300,30 @@ dtfr$tmp <- as.POSIXct(dtfr$tmp, format="%H:%M:%S")-
 units(dtfr$tmp) <- "mins"
 dtfr$tmp <- as.numeric(dtfr$tmp)
 
-head(dtfr)
+## Prepara a variável sexo a partir de faixa etária.
+dtfr$sexo <- substr(dtfr$fxet, 1, 1)
+dtfr$sexo <- factor(dtfr$sexo, levels=c("M", "F"))
+
+## Reescreve os níveis sem presença do sexo.
+dtfr$fxet <- paste0("[", substr(dtfr$fxet, 2, 3), ", ",
+                    substr(dtfr$fxet, 4, 5), "]")
+
+## Cria um fator baseado na idade.
+dtfr$eq <- equal.count(dtfr$idade, number=9, overlap=0.1)
 
 ## Diagrama de dispersão do tempo de prova contra a idade.
-xyplot(tmp~idade, data=dtfr,
+xyplot(tmp~idade|sexo, data=dtfr, layout=c(1, NA),
        ylab="Tempo para concluir a prova (min)",
        xlab="Idade do atleta (anos)")
 
-densityplot(~tmp|fxet, data=dtfr, as.table=TRUE,
+densityplot(~tmp|eq, data=dtfr, as.table=TRUE, groups=sexo,
+            strip=strip.custom(strip.levels=TRUE, strip.names=FALSE),
             xlab="Tempo para concluir a prova (min)",
             ylab="Densidade")
 
-ecdfplot(~tmp|fxet, data=dtfr, as.table=TRUE,
+ecdfplot(~tmp|eq, data=dtfr, as.table=TRUE,
+         strip=strip.custom(strip.levels=TRUE, strip.names=FALSE),
+         groups=sexo, auto.key=TRUE,
          xlab="Tempo para concluir a prova (min)",
          ylab="Distribuição de frequências relativas acumulada")
 
@@ -313,13 +332,12 @@ ecdfplot(~tmp|fxet, data=dtfr, as.table=TRUE,
 Você pode adaptar esse *script* ([webScrapSaoSilvestre.R]) para os
 resultados de outros anos da São Silvestre. No entanto, se você visitar
 os outros links, vai perceber que os resultados em html começaram em
-2007 e que mantiveram o padrão estrutural. Por outro lado, antes de
-2007, eles eram divulgados em formato texto de comprimento fixo e cada
-ano tinha uma estrutura diferente. Para ler os últimos, você pode usar a
-`read.fwf()`.
+2007 e que mantiveram o padrão estrutural. Antes de 2007, eles eram
+divulgados em formato texto de comprimento fixo e cada ano tinha uma
+estrutura diferente. Para ler os últimos, você pode usar a `read.fwf()`.
 
 [São Silvestre]: http://www.saosilvestre.com.br/resultados/
-[2014]: http://www.yescom.com.br/codigo_comum/classificacao/codigo/p_classificacao03_v1.asp?evento_yescom_id=1612&tipo=3&tipo_do_evento_id=4243&PaginaAtual=1&faixa=&sexo=M&campo=&pesquisa=
+[2013]: http://www.yescom.com.br/codigo_comum/classificacao/codigo/p_classificacao03_v1.asp?tipo_do_evento_id=4128&tipo=3&evento_yescom_id=1511
 [webScrapSaoSilvestre.R]: http://blog.leg.ufpr.br/~walmes/public/2015-10-03_webScrapSaoSilvestre.R
 
 <!-- --------------------------------------------------------------- -->
