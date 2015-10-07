@@ -74,7 +74,7 @@ atributos, como a largura `<witdh='98%'>` e a cor de fundo `<bgcolor>`.
 <img src="http://blog.leg.ufpr.br/~walmes/printScreenSaoSilvestre.png" width='90%'>
 
 Carreguei os pacotes necessários e li a página para decodificar com
-`xmlTreeParse()`. No `summary` tem-se o número de ocorrências de cada
+`htmlTreeParse()`. No `summary` tem-se o número de ocorrências de cada
 tipo de elemento html na página. O campo que me interessa é o `table`
 pois é ele que contém os dados que quero. Mas não existe apenas um
 `table` (como eu gostaria) e sendo assim, eu tive que ser específico ao
