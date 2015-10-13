@@ -1,0 +1,212 @@
+```{r header, include=FALSE}
+##======================================================================
+## Como fazer um CMR
+## http://blog.leg.ufpr.br/archives/???
+##                                            Walmes Zeviani - LEG UFPR
+##======================================================================
+```
+
+```{r setupknitr, include=FALSE, purl=FALSE}
+## ATTENTION!
+opts_knit$set(
+    base.dir="/home/walmes/Dropbox/blog/public/",
+    base.url="http://blog.leg.ufpr.br/~walmes/public/")
+
+opts_chunk$set(
+    ## comment=NA,
+    ## cache=TRUE,
+    message=FALSE,
+    error=FALSE,
+    warning=FALSE,
+    fig.width=6,
+    fig.height=6,
+    dpi=90,
+    dev="png",
+    dev.args=list(family="Helvetica"),
+    fig.path="comoFazerUmCMR-")
+
+```
+
+<!-- RASCUNHO RASCUNHO RASCUNHO RASCUNHO RASCUNHO RASCUNHO RASCUNHO  -->
+
+Essa mensagem pode ser atualizada conforme demanda. Portanto daqui algum
+tempo ela pode estar maior devido à mais conteúdo ou até menor devido a
+uma melhor redação.
+
+Lista de discurssão são a forma com a qual muitas pessoas encontram
+suporte na internet. É muito ligada ao uso de software. No markmail, R
+tem 24 listas de discussão oficiais. Outros softwares, como LaTex, Tikz,
+phython, Linux, possuem listas de discussão também.
+
+Aqui no brasil temos a R-br. Criada no dia ?? mantida pelo ??.
+
+O sucesso de uma boa comunição é clareza, objetivos um pouco de
+concisão.
+
+O conceito de pesquisa reproduzível ou *literate programming* é ...
+
+O que é importante para solução de muitos problemas relacionados à
+código é entendê-los adequadamente. À vezes o que se deseja é muito
+complexo ou é um bug. Nessas situações é muito importante oferecer meios
+das pessoas reproduzirem o seu problema. Parece simples, mas pessoas que
+precisam de ajuda muitas vezes não tem conhecimento do que é um código
+reproduzível nem de formas de como oferecê-lo.
+
+Nessa matéria iremos considerar a problemática de gerar códigos
+reproduzíveis para R. Serão consideradas diversas maneiras de fornecer
+os dados junto ao código já que em grande parte, o problema de execussão
+de código tá sempre atrelado à uma base de dados. Serão mencionados
+lugares públicos para hospedagem dos dados e como indicar a leitura dos
+mesmos além de formas de apresentados junto à propria mensagem.
+
+As versões dos pacotes, detalhes do sistema operacional, as messagens de
+erro, enfim, todas essas informações são essenciais para solucionar um
+problema de execussão também. Usar `sessionInfo()` ou
+`devtools::session_info()`. Indique de que pacote são as funções que
+você está usando. A dica é sempre incluir os pacotes usados na sessão,
+por isso do `sessionInfo()`. Usuários do RStudio podem por vezes
+carregar fazendo um check na lista de pacotes que aparecem na aba
+packages, por favor, evitem essa forma gráfica e preguiçosa de fazer,
+prefiram escrever no script porque isso fica documentado. Cuidado com
+variáveis definidas no `.Rprofile` ou pacotes carregados lá.
+
+Com o tempo o número de mensagem começou à descrescer. Vejo duas
+possíveis razões: 1) a retroalimentação que é o fato de o histórico
+providência soluções e isso não exige envio de novas mensagens e as
+pessoas usarem outros mecanísmos de suporte, como o StackOverflow, Quora
+e CrossValidated.
+
+Hoje em dia, maior parte da ajuda tem sido por meio de serviços como o
+StackOverflow. A vantagem desse é que ele premia bons colaboradores
+então o sistema se auto educa pela premiação e a propagação de bons
+exemplos.
+
+É importante que a mensagem não tenha títulos vagos mas títulos
+apropriados e também buscáveis para que no futuro outras pessoas possam
+encontrar a mensagem. O histórico da lista R-br está disponível no
+Nabble e no MailArchive. A lista tem hoje ?? membros. Um total de
+mensagens de ??, uma média de mensagens ao dia de ??.
+
+## Formas de disponibilizar os dados
+
+  * Usando dados dentro do R;
+  * No corpo da mensagem usando o saída do `dput()`;
+  * Em um diretório público para aqueles que tem servidores, páginas
+    (pessoais), sites como wiki ou blogs;
+  * Arquivos no GitHub, GitLab ou outro site de SCV;
+  * Em diretórios publicos de serviços como o DropBox, OneDrive;
+  * Arquivos disponíveis no Google Drive;
+  * Arquivos em sites do hospedagem como o datafilehost;
+  
+Conhecer o período de carência é importante porque a mensagem no futuro
+pode não ser reproduzível. As duas primeiras opções são as melhores pois
+garantem reprodutibilidade atemporal.
+
+Formas de ler/baixar: `read.table()`, `getURL()`, `file.download()`,
+`source()` e `load()`. Evite arquivos com conteúdo que tenha acentos ou
+se não for possível indique sempre o encoding. O load() é interessante
+quando são vários os objetos necessários ou quando eles são baseados em
+vários arquivos, como a trinca shapefile para mapas. A desvantagem é que
+`RData` é formato binário próprio do R, outras pessoas não irão
+conseguir usar outro software nos teus dados. Mas quem se importa, se a
+lista é de R seria uma obrigação evitar aquivos de R?
+
+Evitar arquivos binários, como xls, xlsx, ou de formatos
+proprietários. Preferir os arquivos tipo texto que se utilizam de
+funções básicas para leitura.
+
+## Cuidados com a escrita do código
+
+Indentação é um requisito mínimo. Todo editor descente faz indentação de
+forma apropriada. Não ultrapassar margem de 72 tabs. Isso pode quebrar o
+código de forma a comprometer sua execussão criando novas linhas por
+espremer o código em 72 tabulações. Use uma fonte que seja mono espaçada
+pois isso presenva a intenção uma vez que os digitos são de mesma
+largura. Ainda existem pessoas que leem no terminal, ou usam serviços de
+webmail nas universidades ou locais de trabalho que processam o texto.
+
+## Como checar se o código está reproduzível
+
+A melhor forma é autenticar como convidado no seu SO e tente rodar o seu
+CMR. Para isso, hospede provisoriamente em um lugar onde você possa
+pegá-lo, como uma mensagem salva como rascunho na sua caíxa de
+email. Isso evita que definições locais passem despercebido, como
+variáveis ou pacotes carregados no `.Rprofile`.
+
+Feche sua sessão R. Garanta que o histórico ou qualquer outra coisa não
+sejam lidos ao iniciar o R. Garanta que nenhum pacote fora os básicos
+foram carragados. Carregue os pacote necessários, leia os dados e
+execute todos os comandos. Se tudo reproduzir é uma garantia parcial de
+que irá funcionar para outros também.
+
+<!-- --------------------------------------------------------------- -->
+
+```{r publish, eval=FALSE, include=FALSE, purl=FALSE}
+##-------------------------------------------
+## Compilar e enviar para o blog.
+## ATTENTION!
+
+library(knitr)
+library(RWordPress)
+
+## Nome do arquivo.
+post <- "2015-10-16_comoFazerUmCMR.Rmd"
+
+## Titulo do post.
+title <- "Como fazer um código mínimo reproduzível"
+
+## Categoria(s) e palavras chaves.
+categ <- c("??")
+keywd <- c("??")
+
+## Sua pasta local, conteúdo a subir para a public_html.
+localpublic <- "/home/walmes/Dropbox/blog/public"
+
+## Forneça senha de usuário do blog.
+pass <- scan(n=1, what=character())
+
+## Digitar porta e depois endereço do servidor (para rsync).
+serv <- scan(n=2, what=character())
+
+##-------------------------------------------
+## Para ver como está ficando.
+
+knit2html(post)
+
+##-------------------------------------------
+## Enviar figuras para a servidora.
+
+## Extraí o código R da matéria.
+cmd <- paste("purl -n", post, "&& mv",
+             sub("md$", "", post), localpublic)
+system(cmd)
+
+## Executa rsync para enviar figuras para o servidor.
+cmd <- paste("rsync -avzh --progress --delete",
+             sprintf("-e \"ssh -p %s\"", serv[1]), localpublic,
+             sprintf("walmes@%s:/home/walmes/public_html/", serv[2]))
+system(cmd)
+
+##-------------------------------------------
+## Enviar para o blog do leg.
+
+options(WordpressLogin=c(walmes=pass),
+        WordpressURL="http://blog.leg.ufpr.br/xmlrpc.php")
+
+source("http://git.leg.ufpr.br/leg/legTools/raw/master/R/knit2wpCrayon.R")
+
+## Usar na primeira vez.
+## knit2wpCrayon(post, title=title,
+##               action="newPost",
+##               categories=categ, mt_keywords=keywd,
+##               write=FALSE, upload=TRUE,
+##               publish=FALSE)
+
+## Usar quando atualizar o post.
+knit2wpCrayon(post, title=title,
+              action="editPost", postid=250,
+              categories=categ, mt_keywords=keywd,
+              write=FALSE, upload=TRUE,
+              publish=FALSE)
+
+```
