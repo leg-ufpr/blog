@@ -1,4 +1,7 @@
-# Blog do LEG
+<img src="./logo.png" width="150px" align="right" display="block">
+
+Blog do LEG
+===========
 
 Repositório git para hospedar as materías publicadas no [Blog do LEG](http://blog.leg.ufpr.br).
 

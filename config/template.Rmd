@@ -1,0 +1,117 @@
+---
+# Título da matéria. Terá que preencher no site.
+title: "Arquivo molde para criação de matérias"
+# Apenas para controle interno.
+author: "Joselito Sem Noção"
+# Data no blog será a data de publicação lá.
+date: "43 de Junho de 2040"
+# Representam as palavras-chave. Incluí-las no blog.
+tags: ["knitr", "chunk", "referências", "abnt"]
+# São as categorias da matéria. Incluí-las no blog.
+categories: ["template", "RMarkdown"]
+# CSL (citation style language) usa formato ABNT nas citações.
+csl: "../config/ABNT-UFPR-2011-Mendeley.csl"
+# Arquvio que contém as referências.
+bibliography: "Rpacks.bib"
+#-- Usar para gerar o fragmento.
+#output:
+#  html_fragment
+#-- Usar enquanto edita.
+output:
+  html_document:
+    theme: flatly
+---
+
+```{r, include = FALSE}
+# Carrega as configurações.
+source("../config/setup.R")
+```
+
+Esse arquivo ilustra como criar uma matéria em Rmd. Vamos começar
+indicando que o valor de $\pi$ vale `r round(pi, digits = 5)`. Acabamos
+de inserir expressões matemáticas e código R na linha.
+
+## Expressões matemáticas
+
+Para inserir expressões matemáticas é como no LaTeX, use `$` para
+expressões na linha e `$$` para expressões em bloco. Abaixo a função
+densidade da distribuição normal.
+
+$$
+f(x) = \dfrac{1}{\sqrt{2\pi\sigma^2}}
+  \exp\left\{\dfrac{-(x-\mu)^2}{2\sigma^2}\right\}.
+$$
+
+## Inserindo fragmentos de código
+
+Para inserir código R, basta criar um chunk de código. Veja a
+documentação do knitr para lembrar das opções de controle de execução e
+exibição de chunk.
+
+```{r}
+summary(iris)
+```
+
+## Gráficos
+
+Para inclusão de figuras com legenda, use a opção de chunk
+`fig.cap`. Para numeração das figuras, pode-se usar o pacote
+`captioner`, conforme o exemplo a seguir.
+
+```{r, echo = FALSE, fig.cap = cap}
+cap <- fgn_(name = "label",
+            caption = "Uma legenda para a figura.")
+
+library(lattice)
+
+xyplot(dist ~ speed,
+       data = cars,
+       type = c("p", "smooth"),
+       xlab = "Velocidade",
+       ylab = "Distância percorrida")
+```
+
+Aí a referência da figura é simples: `r fgl_("label")`.
+
+## Imagens externas
+
+Imagens externas dever ser inseridas com a função
+`knitr::include_graphics()`.
+
+```{r, echo = FALSE, fig.cap = cap, out.width = "300px"}
+cap <- fgn_(name = "logo",
+            caption = "Logo do repositório.")
+
+include_graphics(path = "logo.png")
+```
+
+A `r fgl_("logo")` é o logo desse repositório.
+
+## Tabelas
+
+Tabelas são feitas usando a função `knitr::kable()`.
+A `r tbl_("mtcars")` foi feita assim.
+
+```{r, echo = FALSE, results = "asis"}
+cap <- tbn_(name = "mtcars",
+            caption = "Legenda da tabela.")
+kable(mtcars,
+      caption = cap)
+```
+
+## Referências bibliográficas
+
+Para referências biliográficas, aponte o arquivo `.bib` no campo
+`bibliography` do yaml. Referências sem os parênteses são feitas com
+@R-rmarkdown para referência sem parenteses e com [@R-base] para
+referências entre parenteses.  Os nomes depois dos sinais de `@` são os
+labels das referêncais no arquivo `.bib`.
+
+```{r, include = FALSE}
+# Apenas para gerar um arquivo *.bib com algumas referências.
+knitr::write_bib(c(.packages(),
+                   "rmarkdown"),
+                 "Rpacks.bib")
+```
+
+# Referências
