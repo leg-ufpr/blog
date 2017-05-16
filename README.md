@@ -1,4 +1,4 @@
-<img src="./logo.png" width="150px" align="right" display="block">
+<img src="./config/logo.png" width="150px" align="right" display="block">
 
 Blog do LEG
 ===========
