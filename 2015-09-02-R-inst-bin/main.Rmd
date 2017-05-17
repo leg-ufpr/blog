@@ -1,29 +1,16 @@
-```{r header, include=FALSE}
-##======================================================================
-## Instalação do R: arquivos binários
-## http://blog.leg.ufpr.br/archives/230
-##                                             Fernando Mayer - LEG UFPR
-##======================================================================
-```
+---
+title: "Instalação do R: arquivos binários"
+author: "Fernando Mayer"
+categories: ["computacional"]
+tags: ["R", "Linux"]
+output:
+  html_fragment
+#  html_document:
+#    theme: flatly
+---
 
-```{r setupknitr, include=FALSE, purl=FALSE}
-## ATTENTION!
-opts_knit$set(
-    base.dir="~/Dropbox/UFPR-LEG/blog/figure",
-    base.url="http://blog.leg.ufpr.br/~fernandomayer/")
-
-opts_chunk$set(
-    ## comment=NA,
-    ## cache=TRUE,
-    message = FALSE,
-    error = FALSE,
-    warning = FALSE,
-    fig.width = 6,
-    fig.height = 6,
-    dpi = 90,
-    dev = "png",
-    dev.args = list(family = "Helvetica"),
-    fig.path = "figure/R_inst_bin-")
+```{r setupknitr, include = FALSE, purl = FALSE}
+source("../config/setup.R")
 ```
 
 O R é um programa para análise estatística de livre distribuição e de
@@ -186,7 +173,7 @@ versão nova possui um número e um codinome. Por exemplo, a última versão
 (atual) é a 15.04 Vivid Vervet. Mesmo se você usa a última versão do
 Ubuntu, é possível que a versão do R disponível nos repositórios não
 seja a mais atual. Por isso, podemos adicionar um repositório do CRAN
-para poder baixar a última versão, e receber atualizações automáticas. 
+para poder baixar a última versão, e receber atualizações automáticas.
 
 Assim como no Debian, para adicionar um repositório, abra o arquivo
 `/etc/apt/sources.list` com um editor de texto (ex.: `sudo gedit
@@ -326,72 +313,3 @@ outro post aqui no blog.
 [Arch Linux]: https://www.archlinux.org/
 [Manjaro]: https://manjaro.github.io/
 [Antergos]: http://antergos.com/
-
-<!-- --------------------------------------------------------------- -->
-
-```{r publish, eval=FALSE, include=FALSE, purl=FALSE}
-##-------------------------------------------
-## Compilar e enviar para o blog.
-## ATTENTION!
-
-library(knitr)
-library(RWordPress)
-
-## Nome do arquivo.
-post <- "2015-09-02_R_inst_bin.Rmd"
-
-## Titulo do post.
-title <- "Instalação do R: arquivos binários"
-
-## Categoria(s) e palavras chaves.
-categ <- c("computacional")
-keywd <- c("R", "Linux")
-
-## Sua pasta local, conteúdo a subir para a public_html.
-localpublic <- "~/Dropbox/UFPR-LEG/blog/"
-## Conteudo com figuras
-localpublic.fig <- "~/Dropbox/UFPR-LEG/blog/figure/"
-
-## Forneça senha de usuário do blog.
-pass <- scan(n=1, what=character())
-
-## Digitar porta e depois endereço do servidor (para rsync).
-serv <- scan(n=2, what=character())
-
-##-------------------------------------------
-## Para ver como está ficando.
-
-knit2html(post)
-
-##-------------------------------------------
-## Enviar figuras para a servidora.
-
-## Extraí o código R da matéria.
-cmd <- paste("purl -n", post, "&& mv",
-             sub("md$", "", post), localpublic)
-system(cmd)
-
-## Executa rsync para enviar figuras para o servidor.
-cmd <- paste("rsync -avzh --progress",
-             sprintf("-e \"ssh -p %s\"", serv[1]), localpublic.fig,
-             sprintf("fernandomayer@%s:~/public_html/", serv[2]))
-system(cmd)
-
-##-------------------------------------------
-## Enviar para o blog do leg.
-
-options(WordpressLogin=c(fernandomayer=pass),
-        WordpressURL="http://blog.leg.ufpr.br/xmlrpc.php")
-
-## Usar na primeira vez.
-## knit2wp(post, title=title,
-##         categories=categ, mt_keywords=keywd,
-##         shortcode=FALSE, action="newPost", publish=FALSE)
-
-## Usar quando atualizar o post.
-knit2wp(post, title=title,
-        action="editPost", postid=230,
-        categories=categ, mt_keywords=keywd,
-        shortcode=FALSE, publish=FALSE)
-
-```
