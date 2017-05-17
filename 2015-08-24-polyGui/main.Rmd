@@ -1,180 +1,108 @@
-```{r header, include=FALSE}
-##======================================================================
-## Interface para regressão polinomial
-## http://blog.leg.ufpr.br/archives/179
-##                                            Walmes Zeviani - LEG UFPR
-##======================================================================
-```
+---
+title: "Interface para regressão polinomial"
+author: "Walmes Zeviani"
+categories: ["gui", "rbloggers_pt"]
+tags: ["gWdigets", "legTools", "lm", "poly"]
+output:
+  html_fragment
+# html_document:
+#   theme: flatly
+---
 
-```{r setupknitr, include=FALSE, purl=FALSE}
-## ATTENTION!
-opts_knit$set(
-    base.dir="/home/walmes/Dropbox/blog/public/",
-    base.url="http://blog.leg.ufpr.br/~walmes/")
-
-opts_chunk$set(
-    ## comment=NA,
-    fig.width=6,
-    fig.height=6,
-    dpi=90,
-    dev="png",
-    dev.args=list(family="Helvetica"),
-    fig.path="polyGui-")
-
-```
-
-![](http://blog.leg.ufpr.br/~walmes/polyGui.gif)
+![](./polyGui.gif)
 
 O pacote [`legTools`][] reune funções e conjuntos de dados que são
 ferramentas no Ensino de Estatística para o LEG. Embora o pacote esteja
 ainda bem no começo do seu desenvolvimento, com menos de um mês de
 existência, já existe um conjunto estabelecido de funções destinadas a
 este pacote. Parte dessas funções fazem interfaces gráficas e foram
-contruídas para atender demandas no Ensino de Estatística. Nessa
+construídas para atender demandas no nnsino de Estatística. Nessa
 matéria, será apresentada a função [`polyGui`][] que foi desenvolvida
 para trabalhar o tema *regressão polinomial*.
 
 Um modelo de regressão polinomial é aquele cujo preditor linear é uma
-função polinômial de ordem $k$ em $x$ $$ \text{E}(Y|x) = \beta_0+\beta_1
-x^1 +\beta_2 x^2 + \cdots + \beta_k x^k.$$
+função polinomial de ordem $k$ em $x$
+$$
+  \text{E}(Y|x) = \beta_0+\beta_1 x^1 +\beta_2 x^2 +
+    \cdots + \beta_k x^k,
+$$
+em que $\text{E}(Y|x)$ denota esperança da variável aleatória $Y$ para
+valores fixados da variável $x$.
 
-Um polinômio de grau 1 é a própria equação da reta e com grau 2 é uma
+Um polinômio de grau 1 é a conhecida equação da reta e com grau 2 é uma
 parábola. A medida que o grau do polinômio cresce, maior sua capacidade
-de se ajustar a um conjunto de dados. Meu colega,
-[Professor Paulo Justiniano][], costuma dizer que o modelo têm mais
-liberdade para "correr atrás dos dados" quando têm mais
-parâmetros. Inclusive, o ajuste chega a ser perfeito quando o grau do
-polinômio é o número de valores de $x$ menos 1. Do ponto de vista
-estatístico, não existe interesse em uma função que dê um ajuste exato
-pois essa função, com um número elevado de termos (ou um algo grau), não
-representa a tendência média, ou seja, não descreve a relação entre os
-valores esperados de $Y$ e os valores de $x$. Dito isso, o que se
-procura é um polinômio de grau suficiente de forma a representar a
-relação entre as variáveis.
+de se ajustar aos dados. Meu colega, [Professor Paulo Justiniano][],
+costuma dizer que o modelo tem mais liberdade para "correr atrás dos
+dados" quando tem mais parâmetros. Inclusive, o ajuste chega a ser
+perfeito quando o grau do polinômio é o número de valores de $x$
+menos 1. Tanto do ponto de vista estatístico quanto prático, não existe
+interesse em uma função que dê um ajuste exato pois essa função, com um
+número elevado de termos (ou um algo grau), não representa mais a
+tendência média. Ou seja, não descreve a relação entre os valores
+esperados de $Y$ e os valores de $x$. Dito isso, o que se procura é um
+polinômio de grau suficiente de forma a representar a relação entre as
+variáveis.
 
 Com a função [`polyGui`][] pode-se controlar o grau do polinômio
 empregado para ajustar o modelo polinomial. Alterando os valores por
 meio dos botões de incremento da interface, percebe-se instantaneamente
-que um baixo grau do polinômio pode não apresentar um ajuste
-satisfatório e um polinômio de alto grau, embora o coeficiente de
+que 1) um baixo grau do polinômio pode não apresentar um ajuste
+satisfatório e 2) um polinômio de alto grau, embora o coeficiente de
 determinação ($R^2$) seja elevado, tem um baixo poder de predição,
 conforme o valor de [PRESS][] (*prediction residual error sum of
 squares*).
 
-O interessante e pouco discutido talvez seja os reflexos disso na banda
-de confiança dos valores preditos que é o que mais têm apelo
-visual. Pode-se perceber que a escolha de um modelo guiada simplesmente
-por valores de $R^2$ é completamente equivocada. O lamentável é que
-ainda é uma prática comum na ciência aplicada. Talvez em parte seja
-devido ao hábito de ajustar modelos e não se fazer gráficos dos valores
-ajustados, preditos e bandas de confiança pois muitos aplicativos não
-fazem gráficos, apenas retornam saídas de texto onde sempre o $R^2$ está
-presente, e uma menor parte é capaz de fazer gráficos de incluir bandas
-de confiança.
+O interessante e pouco discutido são os reflexos do sobre ajuste na
+banda de confiança dos valores preditos. Interface dá uma boa impressão
+visual do que ocorre. Pode-se perceber que a escolha de um modelo guiada
+simplesmente por valores de $R^2$ é completamente equivocada. O
+lamentável é que ainda é uma prática comum na ciência aplicada. Talvez
+em parte seja devido ao hábito de ajustar modelos e não se fazer
+gráficos dos valores ajustados, preditos e bandas de confiança pois
+muitos aplicativos não fazem tais gráficos, apenas retornam saídas de
+texto onde sempre o $R^2$ está presente, e uma menor parte é capaz de
+fazer gráficos de incluir bandas de confiança.
 
-O código fonte da função está disponível no [gitlab do LEG][]. Sugestões
+O código fonte da função está disponível no [github do LEG][]. Sugestões
 e críticas são muito bem vindas! Para instalar o `legTools` é só correr
 o código abaixo.
 
-```{r, eval=FALSE}
-## Instale caso você não tenha.
+```{r, eval = FALSE}
+# Instale caso você não tenha.
 install.packages("devtools")
 
-require(devtools)
-install_git("http://git.leg.ufpr.br/leg/legTools.git")
+library(devtools)
+install_github("leg-ufpr/legTools")
 
-require(legTools)
-polyGui(x=speed, y=dist, data=cars, er=0.3)
+library(legTools)
+polyGui(x = speed, y = dist, data = cars, er = 0.3)
 ```
+
+<!-- Complement ----------------------------- -->
+
+```{r geragif, eval = FALSE, include = FALSE, purl = FALSE}
+#-----------------------------------------------------------------------
+# Executar no shell.
+
+# Definições de posição e tamanho da janela gravada pro gif.
+# 7 inches * 96 dpi = 672 pixels.
+POS=100  # Posição X e Y a partir do canto superior esquerdo.
+LARH=672 # Tamanho da janela na horizontal.
+LARV=700 # Tamanho na janela na vertical.
+
+# gWidgets.
+byzanz-record --duration=10 --x=$POS --y=$POS --width=$LARH --height=$LARV polyGui.gif
+
+# Na sessão R, abrir a janela gráfica dimensões específicas.
+X11(width = 7, height = 7, xpos = 100, ypos = 100)
+```
+
+<!-- Links ---------------------------------- -->
 
 [`legTools`]: http://git.leg.ufpr.br/leg/legTools
 [`polyGui`]: http://git.leg.ufpr.br/leg/legTools/blob/master/R/polyGui.R
 [Professor Paulo Justiniano]: http://www.leg.ufpr.br/~paulojus/
-[gitlab do LEG]: http://git.leg.ufpr.br/leg/legTools/tree/master
+[github do LEG]: https://github.com/leg-ufpr/legTools
 [PRESS]: https://en.wikipedia.org/wiki/PRESS_statistic
 
 <!-- --------------------------------------------------------------- -->
-
-```{r publish, eval=FALSE, include=FALSE, purl=FALSE}
-##-------------------------------------------
-## Compilar e enviar para o blog.
-## ATTENTION!
-
-library(knitr)
-library(RWordPress)
-
-## Nome do arquivo.
-post <- "2015-08-24_polyGui.Rmd"
-
-## Titulo do post.
-title <- "Interface para regressão polinomial"
-
-## Categoria(s) e palavras chaves.
-categ <- c("gui", "rbloggers_pt")
-keywd <- c("gWdigets", "legTools", "lm", "poly")
-
-## Sua pasta local, conteúdo a subir para a public_html.
-localpublic <- "/home/walmes/Dropbox/blog/public"
-
-## Forneça senha de usuário do blog.
-pass <- scan(n=1, what=character())
-
-## Digitar porta e depois endereço do servidor (para rsync).
-serv <- scan(n=2, what=character())
-
-##-------------------------------------------
-## Para ver como está ficando.
-
-knit2html(post)
-
-##-------------------------------------------
-## Enviar figuras para a servidora.
-
-## Extraí o código R da matéria.
-cmd <- paste("purl -n", post, "&& mv",
-             sub("md$", "", post), localpublic)
-system(cmd)
-
-## Executa rsync para enviar figuras para o servidor.
-cmd <- paste("rsync -avzh --progress --delete",
-             sprintf("-e \"ssh -p %s\"", serv[1]), localpublic,
-             sprintf("walmes@%s:/home/walmes/public_html/", serv[2]))
-system(cmd)
-
-##-------------------------------------------
-## Enviar para o blog do leg.
-
-options(WordpressLogin=c(walmes=pass),
-        WordpressURL="http://blog.leg.ufpr.br/xmlrpc.php")
-
-## Usar na primeira vez.
-## knit2wp(post, title=title,
-##         categories=categ, mt_keywords=keywd,
-##         shortcode=FALSE, action="newPost", publish=FALSE)
-
-## Usar quando atualizar o post.
-knit2wp(post, title=title,
-        action="editPost", postid=179,
-        categories=categ, mt_keywords=keywd,
-        shortcode=FALSE, publish=FALSE)
-
-```
-
-```{r geragif, eval=FALSE, include=FALSE, purl=FALSE}
-##----------------------------------------------------------------------
-## Executar no shell.
-
-## Definições de posição e tamanho da janela gravada pro gif.
-## 7 inches * 96 dpi = 672 pixels.
-POS=100  ## Posição X e Y a partir do canto superior esquerdo.
-LARH=672 ## Tamanho da janela na horizontal.
-LARV=700 ## Tamanho na janela na vertical.
-
-## gWidgets.
-cd ~/Dropbox/blog/polyGui/
-byzanz-record --duration=10 --x=$POS --y=$POS --width=$LARH --height=$LARV polyGui.gif
-
-## Na sessão R, abrir a janela gráfica dimensões específicas.
-X11(width=7, height=7, xpos=100, ypos=100)
-
-```
