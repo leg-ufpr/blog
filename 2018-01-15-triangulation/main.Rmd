@@ -4,29 +4,34 @@ author: "Walmes Zeviani"
 categories: ["xml"]
 tags: ["inkscape", "algoritmo"]
 output:
-#  html_fragment
-  html_document:
-    theme: flatly
+  html_fragment
+#  html_document:
+#    theme: flatly
 ---
 
 ```{r, include = FALSE}
 source("../config/setup.R")
+print_images <- TRUE
 ```
 
 # O problema
 
-Este ano, a 63 RBras acontece em Curitiba.  Para fazer a logo do evento,
-decidimos combinar elementos dos cartões postais da cidade com aqueles
-referentes ao tema do evento.  Fazendo buscas por referências na
-internet, a imagem de um cérebro feito com triangulação criou uma
-sugestão: representar a estátua do Jardim Botânico usando a
-triangulação.
+Este ano, a 63ª RBras acontece em Curitiba.  Para fazer a logo do
+evento, decidimos combinar elementos dos cartões postais da cidade com
+aqueles referentes ao seu tema: Biometria e aprendizado estatístico na
+era da informação.  Fazendo buscas por referências na internet, a imagem
+de um cérebro feito com triangulação criou uma sugestão: representar a
+estátua do Jardim Botânico usando a triangulação.  Essa estátua é uma
+[mãe segurando um bebê nos braços](http://www.nerdsviajantes.com/wp-content/uploads/2014/02/jardim-botanico-curitiba-1.jpg).
 
 <!-- Cerébro -->
-<img src="https://thumbs.dreamstime.com/b/abstract-geometric-brain-network-connections-vector-illustration-eps-72507542.jpg">
+```{r, eval = print_images, echo = FALSE, out.width = "50%"}
+u <- "https://thumbs.dreamstime.com/b/abstract-geometric-brain-network-connections-vector-illustration-eps-72507542.jpg"
+knitr::include_graphics(u)
+```
 
-<!-- Mãe com o bebê, estátua do Jardim Botânico -->
-<img src="http://www.nerdsviajantes.com/wp-content/uploads/2014/02/jardim-botanico-curitiba-1.jpg">
+O código abaixo faz o download da imagem para o seu diretório de
+trabalho.  Usaremos essa imagem para produzir a triangulação.
 
 ```{r, cache = TRUE}
 # Baixa a imagem.
@@ -38,20 +43,24 @@ download.file(url, destfile = "foto.jpg")
 # Criar os vértices
 
 Vou ser bem sincero aqui.  A minha primeira tentativa foi fazer o
-desenho na mão.  Ou seja, criar os pontos e as ligações, usando o
-[Inkscape].  Porém, assim que comecei já percebi que levaria tempo e
-estaria sujeito a imperfeição.  Meu lado programador e curioso despertou
-trazendo recordações relacioandas a SPDE feito com o INLA.  A imagem a
-seguir veio à mente.
+desenho na mão.  Ou seja, criar os pontos e as ligações apenas
+utilizando o [Inkscape].  Porém, assim que comecei, percebi que levaria
+tempo e estaria sujeito a imperfeição.  Meu lado programador e curioso
+despertou trazendo recordações relacioandas a SPDE feito com o INLA.  A
+imagem a seguir veio à mente, sugerindo um possível atalho para o que eu
+pretendia fazer.
 
-<img src="https://www.math.ntnu.no/inla/r-inla.org/tutorials/spde/html/spde-tutorial29x.png">
+```{r, eval = print_images, echo = FALSE}
+u <- "https://www.math.ntnu.no/inla/r-inla.org/tutorials/spde/html/spde-tutorial29x.png"
+knitr::include_graphics(u)
+```
 
 Pensei então que eu pudesse cortar caminho fazendo as ligações entre
 pontos com o R, aplicando o mesmo algoritmo usado para triangular dentro
-do polígono do Paraná.  Então eu consultei o especialista em INLA do
-LEG, Elias Teixeira Krainski -- possivelmente o autor dessa imagem --
-que me auxilou com alguns códigos mas que ainda não resolviam por
-completo meu problema.
+do polígono do Paraná, visto na imagem anterior.  Então eu consultei o
+especialista em INLA do LEG, Elias Teixeira Krainski -- possivelmente o
+autor dessa imagem -- que me auxilou com alguns códigos mas que,
+infelizmente, ainda não resolviam por completo meu problema.
 
 Eu continuei as buscas usando variações dos termos "triangular mesh 2D
 coordinates array". Com isso, passei por implementações feitas em
@@ -65,36 +74,43 @@ O pacote [`deldir`] é desenvolvido pelo professor acadêmico honorário
 tem funções que calculam a [triangulação de Delaunay] e a tecelagem de
 Voronoi para um conjunto de pontos no plano 2D (exatamente o que eu
 procurava).  A [triangulação de Delaunay] e a tecelagem de Voronoi são
-conceitos relacionados e ambos são utilizados em estatística espacial e
-modelagem 3D de objetos, como as de filme de animação.
+conceitos relacionados e ambos são utilizados em estatística espacial. A
+triangulação em 3 dimensões é usada para a e modelagem 3D de objetos,
+como ilustração de projetos arquitônicos e filmes de animação.
 
-Agora eu já tinha o algorítmo e, graças a seção *examples* do
-documentação, eu aprendi usá-lo rapidamente, foi a hora de tentar a
-abordagem com a imagem da estátua do Jardim Botânico.  Os passos abaixo
-indicam o que fiz no Inkscape.
+Com os códigos da seção *examples* da documentação, rapidamente entendi
+como usar as funções.  O que eu precisava era das coordenadas dos pontos
+para gerar a triangulação.  Abaixo estão as etapas percorridas no
+Inckscape para gerar os pontos.
 
   1. Criar duas camadas (layers). Uma para a foto (foto) e outra para os
      pontos (pontos).
-  2. Importar a imagem para a camada foto e ajustar tamanho.
+  2. Importar a imagem para a camada foto e ajustar tamanho dentro do
+     espaço de edição.
   3. Com a camada pontos ativa, criar os pontos de demarcação.  Para
      isso eu fiz um círculo de 6 px de diâmetro (círculos amarelos) e
      com cópias do círculo (ctrl-c e ctrl-v) fui demarcando o desenho
      (ver figura abaixo).
   4. Por fim, salvei o arquivo com o nome sugerido, `drawing.svg`.
 
-![](inkscape-01.png)
+```{r, eval = FALSE, echo = FALSE, out.width = "66%"}
+knitr::include_graphics("inkscape-01.png")
+```
 
 O SVG significa *Scalable Vector Graphics* é um formato vetorial de
 imagem baseado em XML.  Abra o arquivo SVG em um editor de texto para
 ver o código fonte.  Você irá vislumbrar que as informações geométrica
-estão descritas no arquivo.  Na figura a seguir, destaco os valores para
-as coordenadas de um dos círculos.
+estão descritas no arquivo.  E são essas as informações de que preciso.
+Na figura a seguir, destaco os valores para as coordenadas de um dos
+círculos.
 
 O arquivo SVG foi lido no R para extração das
 coordenadas dos círculos que são os valores dos atributos `cx` e `cy`
 dos nós com nome `circle`.  O código abaixo descreve esse passo.
 
-![](geany-01.png)
+```{r, eval = print_images, echo = FALSE, out.width = "66%"}
+knitr::include_graphics("geany-01.png")
+```
 
 ```{r, message = FALSE}
 library(XML)
@@ -120,24 +136,25 @@ xy[, 2] <- -xy[, 2]
 # plot(xy, asp = 1)
 # identify(xy[, 1], xy[, 2], 1:nrow(xy))
 
-# Remove misterioso outlier que surgiu.
-xy <- xy[-107, ]
+# Remove misteriosos outliers que surgiram.
+xy <- xy[xy[, 2] < 0 & xy[, 2] > -1000, ]
 
 # Gráfico com ligação cronológica dos pontos.
 plot(xy, asp = 1, type = "o")
 ```
 
 A aplicação da triangulação de Delaunay é a parte mais fácil.  É
-simplesmente aplicar a função sobre a matriz de pontos.  Por fim, os
-gráfico resultando é exportado para SVG novamente para que algumas
-ligações sejam manualmente eliminadas.
+simplesmente aplicar a função sobre a matriz de coordenadas.  Por fim,
+os gráfico resultante é exportado para SVG novamente para que algumas
+ligações sejam manualmente eliminadas lá no Inkscape.
 
 Como o SVG é um fomato vetorial, é possível editar propriedades de
 gráficos gerados no R com editores vetoriais como o Inkscape e Corel
 Draw.  É possível modificar desde fontes usadas nos texto até o
 prechimento de pontos de barras nos gráficos.  As revistas científicas
 poderiam solcitar arquivos em SVG para publicação pois seria muito mais
-fácil dar acabamento.
+fácil dar acabamento.  Por razões que desconheço, as revistas pedem
+formatos bitmap.
 
 ```{r}
 library(deldir)
@@ -176,15 +193,41 @@ dev.off()
 # O acabamento
 
 Para eliminar algumas ligações, volto novamente para o Inkscape.  A foto
-foi importada para indicar quais ligações remover.  Na figura a seguir,
-os seguimentos em rosa foram eliminados.
+original foi importada para indicar quais ligações remover.  Na figura a
+seguir, os seguimentos em rosa foram eliminados.
 
-![](inkscape-02.png)
+```{r, include = FALSE}
+print_images <- FALSE
+```
 
-A próxima figura é o resultado do processo todo.  Essa imagem agora
-será usada para compor a logo da 63 RBras.
+```{r, eval = print_images, echo = FALSE, out.width = "66%"}
+knitr::include_graphics("inkscape-02.png")
+```
 
-![](inkscape-03.png)
+A próxima figura é o resultado do processo todo.  Essa imagem agora será
+usada para compor a logo da 63ª RBras.  Confira o resultado final na
+página do evento: http://rbras.org.br/rbras63/.
+
+```{r, eval = print_images, echo = FALSE, out.width = "66%"}
+knitr::include_graphics("inkscape-03.png")
+```
+
+```{r, eval = FALSE}
+f <- dir(pattern = "\\d{2}\\.png$")
+file.info(f)
+
+for (i in f) {
+    system(sprintf('convert "%s" -resize 600 "%s"', i, i))
+}
+
+file.info(f)
+
+# Caso tenha dado errado, desfaça.
+system(sprintf('git checkout -- %s', paste(f, collapse = " ")))
+
+# Para copiar do arquivo para a área de transferência.
+# xclip -sel c < main.html
+```
 
 <!------------------------------------------- -->
 
