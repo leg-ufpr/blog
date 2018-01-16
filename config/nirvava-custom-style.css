@@ -1,0 +1,13 @@
+/* Código em linha. */
+.entry-content code {
+    padding: 0px;
+    text-indent: 0;
+    border-left: none;
+    display: inline;
+}
+
+/* Imagens centralizadas nas postagens. */
+#content img {
+    margin: auto;
+    display: block;
+}
