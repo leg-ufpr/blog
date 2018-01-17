@@ -100,7 +100,7 @@ Inckscape para gerar os pontos.
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
 #knitr::include_graphics("inkscape-01.png")
 ```
-<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/inkscape-01.png" width="50%"> -->
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-17-triangulation/inkscape-01.png" width="50%"> -->
 
 O SVG significa *Scalable Vector Graphics* é um formato vetorial de
 imagem baseado em XML.  Abra o arquivo SVG em um editor de texto para
@@ -116,7 +116,7 @@ dos nós com nome `circle`.  O código abaixo descreve esse passo.
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
 # knitr::include_graphics("geany-01.png")
 ```
-<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/geany-01.png" width="50%"> -->
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-17-triangulation/geany-01.png" width="50%"> -->
 
 ```{r, message = FALSE}
 library(XML)
@@ -209,7 +209,7 @@ seguir, os seguimentos em rosa foram eliminados.
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
 # knitr::include_graphics("inkscape-02.png")
 ```
-<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/inkscape-02.png" width="50%"> -->
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-17-triangulation/inkscape-02.png" width="50%"> -->
 
 A próxima figura é o resultado do processo todo.  Essa imagem agora será
 usada para compor a logo da 63ª RBras.  Confira o resultado final na
@@ -218,7 +218,7 @@ página do evento: http://rbras.org.br/rbras63/.
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
 # knitr::include_graphics("inkscape-03.png")
 ```
-<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/inkscape-03.png" width="50%"> -->
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-17-triangulation/inkscape-03.png" width="50%"> -->
 
 ```{r, include = FALSE, eval = FALSE}
 f <- dir(pattern = "\\d{2}\\.png$")
