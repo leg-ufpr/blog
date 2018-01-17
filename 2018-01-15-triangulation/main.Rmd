@@ -4,7 +4,8 @@ author: "Walmes Zeviani"
 categories: ["xml"]
 tags: ["inkscape", "algoritmo"]
 output:
-  html_fragment
+  html_fragment:
+    self_contained: yes
 #  html_document:
 #    theme: flatly
 ---
@@ -27,8 +28,10 @@ estátua do Jardim Botânico usando a triangulação.  Essa estátua é uma
 <!-- Cerébro -->
 ```{r, eval = print_images, echo = FALSE, out.width = "50%"}
 u <- "https://thumbs.dreamstime.com/b/abstract-geometric-brain-network-connections-vector-illustration-eps-72507542.jpg"
-knitr::include_graphics(u)
+# knitr::include_graphics(u)
 ```
+
+<!-- <img src="https://thumbs.dreamstime.com/b/abstract-geometric-brain-network-connections-vector-illustration-eps-72507542.jpg" width="50%"> -->
 
 O código abaixo faz o download da imagem para o seu diretório de
 trabalho.  Usaremos essa imagem para produzir a triangulação.
@@ -52,8 +55,9 @@ pretendia fazer.
 
 ```{r, eval = print_images, echo = FALSE}
 u <- "https://www.math.ntnu.no/inla/r-inla.org/tutorials/spde/html/spde-tutorial29x.png"
-knitr::include_graphics(u)
+# knitr::include_graphics(u)
 ```
+<!-- <img src="https://www.math.ntnu.no/inla/r-inla.org/tutorials/spde/html/spde-tutorial29x.png"> -->
 
 Pensei então que eu pudesse cortar caminho fazendo as ligações entre
 pontos com o R, aplicando o mesmo algoritmo usado para triangular dentro
@@ -93,9 +97,10 @@ Inckscape para gerar os pontos.
      (ver figura abaixo).
   4. Por fim, salvei o arquivo com o nome sugerido, `drawing.svg`.
 
-```{r, eval = FALSE, echo = FALSE, out.width = "66%"}
-knitr::include_graphics("inkscape-01.png")
+```{r, eval = print_images, echo = FALSE, out.width = "66%"}
+#knitr::include_graphics("inkscape-01.png")
 ```
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/inkscape-01.png" width="50%"> -->
 
 O SVG significa *Scalable Vector Graphics* é um formato vetorial de
 imagem baseado em XML.  Abra o arquivo SVG em um editor de texto para
@@ -109,8 +114,9 @@ coordenadas dos círculos que são os valores dos atributos `cx` e `cy`
 dos nós com nome `circle`.  O código abaixo descreve esse passo.
 
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
-knitr::include_graphics("geany-01.png")
+# knitr::include_graphics("geany-01.png")
 ```
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/geany-01.png" width="50%"> -->
 
 ```{r, message = FALSE}
 library(XML)
@@ -197,22 +203,24 @@ original foi importada para indicar quais ligações remover.  Na figura a
 seguir, os seguimentos em rosa foram eliminados.
 
 ```{r, include = FALSE}
-print_images <- FALSE
+#print_images <- FALSE
 ```
 
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
-knitr::include_graphics("inkscape-02.png")
+# knitr::include_graphics("inkscape-02.png")
 ```
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/inkscape-02.png" width="50%"> -->
 
 A próxima figura é o resultado do processo todo.  Essa imagem agora será
 usada para compor a logo da 63ª RBras.  Confira o resultado final na
 página do evento: http://rbras.org.br/rbras63/.
 
 ```{r, eval = print_images, echo = FALSE, out.width = "66%"}
-knitr::include_graphics("inkscape-03.png")
+# knitr::include_graphics("inkscape-03.png")
 ```
+<!-- <img src="https://raw.githubusercontent.com/leg-ufpr/blog/master/2018-01-15-triangulation/inkscape-03.png" width="50%"> -->
 
-```{r, eval = FALSE}
+```{r, include = FALSE, eval = FALSE}
 f <- dir(pattern = "\\d{2}\\.png$")
 file.info(f)
 
@@ -220,10 +228,15 @@ for (i in f) {
     system(sprintf('convert "%s" -resize 600 "%s"', i, i))
 }
 
+# Remove marca de comentário em <img>.
+system("sed -i -e 's/^<!-- \(<img .*\) -->$/\1/g' main.html")
+
 file.info(f)
 
 # Caso tenha dado errado, desfaça.
 system(sprintf('git checkout -- %s', paste(f, collapse = " ")))
+
+help(knit2html, package = "knitr")
 
 # Para copiar do arquivo para a área de transferência.
 # xclip -sel c < main.html
