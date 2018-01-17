@@ -49,7 +49,7 @@ Vou ser bem sincero aqui.  A minha primeira tentativa foi fazer o
 desenho na mão.  Ou seja, criar os pontos e as ligações apenas
 utilizando o [Inkscape].  Porém, assim que comecei, percebi que levaria
 tempo e estaria sujeito a imperfeição.  Meu lado programador e curioso
-despertou trazendo recordações relacioandas a SPDE feito com o INLA.  A
+despertou trazendo recordações relacionadas a SPDE feito com o INLA.  A
 imagem a seguir veio à mente, sugerindo um possível atalho para o que eu
 pretendia fazer.
 
