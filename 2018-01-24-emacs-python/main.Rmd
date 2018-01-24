@@ -1,0 +1,178 @@
+---
+title: "Usando scripts Python no Emacs"
+author: "Fernando Mayer"
+date: "24 de Janeiro de 2018"
+tags: ["python", "emacs"]
+categories: ["python", "emacs"]
+#output:
+#  html_fragment
+#-- Usar enquanto edita.
+output:
+  html_document:
+    theme: flatly
+---
+
+```{r, include = FALSE}
+# Carrega as configurações.
+source("../config/setup.R")
+```
+
+No início de Janeiro de 2018 iniciamos um grupo de estudos sobre o uso
+do Python para estatística. O objetivo era tentarmos descobrir como
+fazer em Python aquilo que fazemos rotineiramente em R. O resultado foi
+muito interessante e vimos que existe muita similaridade entre as duas
+linguagens. Abaixo está a divulgação que fizemos do grupo de estudos.
+
+<iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fleg.ufpr%2Fposts%2F935006519988723&width=500&show_text=false&height=333&appId" width="500" height="333" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+
+Uma das primeiras coisas que analisamos, logo no início do curso, foram
+as IDEs (*Integrated Development Environment* ou Ambiente de
+Desenvolvimento Integrado) mais utilizadas para se escrever e executar
+códigos em Python. No mundo do R, sabemos que o onipresente
+[RStudio](https://www.rstudio.com) é o editor preferido da maioria dos
+usuários. No entanto, no mundo do Python não parece haver um único
+preferencial.
+
+Na categoria de uma IDE específica para a linguagem (como é o RStudio
+para o R), vimos primeiro o
+[Spyder](https://pythonhosted.org/spyder/index.html), por ser o editor
+distribuído junto com a plataforma [Anaconda](https://anaconda.org).
+Naturalmente, existe também o [Jupyter notebook](http://jupyter.org) que
+permite misturar código e texto em um único documento, mas por enquanto
+estávamos apenas interessados em editores para scripts "puros" de Python
+(arquivos `.py`). Fora o Spyder, sabemos que existem diversos bons
+editores de uso geral, que permitem a edição e possuem ferramentas
+comuns para várias linguagens. Entre estes editores estão o
+[Atom](https://atom.io) e o [Sublime](https://www.sublimetext.com), que
+tem suporte para a edição de scripts em Python.
+
+No entanto, como a ideia do grupo de estudos era se familiarizar com o
+Python, então nada melhor do que utilizarmos o mesmo editor que já
+utilizamos para códigos R. E esse editor é o
+[Emacs](https://www.gnu.org/software/emacs), utilizado por muitos aqui
+no LEG. O Emacs é um editor altamente customizável e de múltiplos
+propósitos. Seu alto índice de uso aqui no laboratório remonta aos
+tempos de uma era pré-RStudio, quando a edição de scripts R no Linux só
+era possível de duas formas: copiando código de um editor qualquer e
+colando no terminal ou usando o módulo [ESS](http://ess.r-project.org)
+(*Emacs Speaks Statistics*) para o Emacs.
+
+Dito isso, naturalmente fomos em busca da solução para usar o Python de
+uma forma similar ao ESS no Emacs. O Emacs já possui um "modo" Python
+por padrão, ou seja, ao abrir um script `.py` já existem as ferramentas
+mais comuns de um editor (*syntax highlighting*, identação automática,
+etc). No entanto, pode-se ganhar muito mais funcionalidades ao se
+instalar e habilitar um modo mais elaborado para Python. De acordo com a
+[Emacs Wiki](https://www.emacswiki.org/emacs/PythonProgrammingInEmacs),
+existem três grandes modos do Python para o Emacs:
+
+- [Elpy](https://github.com/jorgenschaefer/elpy)
+- [anaconda-mode](https://github.com/proofit404/anaconda-mode)
+- [Python
+  layer](https://github.com/syl20bnr/spacemacs/tree/master/layers/%2Blang/python)
+  para o [Spacemacs](http://spacemacs.org), que utiliza o
+  `anaconda-mode` e diversos outros pacotes.
+
+Entre estes modos, o que mais chamou nossa atenção foi o Elpy, por ser o
+mais próximo (em utilização) ao ESS que já estamos acostumados. Por
+isso, vamos mostrar como instalar e habilitar o Elpy no Emacs padrão e
+também no Spacemacs. O Spacemacs nada mais é do que um Emacs que já vem
+com uma série de pacotes pré-instalados e habilitados, mas possui um
+sistema de instalação de pacotes um pouco diferente, baseado em
+*layers*.
+
+## Instalando Elpy no Emacs
+
+De acordo com a [documentação do
+Elpy](https://github.com/jorgenschaefer/elpy), para instalar no Emacs
+padrão, antes é necessário instalar os seguintes pacotes para o Python
+(aqui utilizando o `pip` como instalador):
+
+```{sh, eval=FALSE}
+sudo pip install rope
+sudo pip install jedi
+sudo pip install flake8
+sudo pip install autopep8
+sudo pip install yapf
+```
+
+A instalação do Elpy deve ser feita através do MELPA (que é o
+procedimento padrão para se instalat qualquer pacote no Emacs). Para
+habilitar o MELPA (se ainda não estiver habilitado) veja esse
+[link](https://www.emacswiki.org/emacs/MELPA). Feito isso, digite:
+
+```
+M-x package-list-packages
+```
+
+para abrir a lista de pacotes disponíveis do MELPA. Procure pelo Elpy
+com
+
+```
+C-s elpy
+```
+
+e aperte <kbd>Enter</kbd> para instalar automaticamente. Feito isso,
+abra seu `~/.emacs` e insira essas linhas para habilitar o pacote:
+
+```
+(package-initialize)
+(elpy-enable)
+```
+
+Reinicie o Emacs e abra um arquivo `.py`. O modo Elpy já deverá estar
+habilitado (veremos alguns comandos básicos logo abaixo).
+
+Um detalhe importante (mas não estritamente necessário) é que você pode
+alterar a versão do Python que será utilizada quando você abrir o
+terminal do Python no Emacs. Por exemplo, esse comando:
+
+```
+(custom-set-variables
+ '(python-shell-interpreter "/usr/bin/python3"))
+```
+
+indica que o `python3` deverá ser utilizado em todas as sessões. Da
+mesma forma, esse caminho pode ser alterado para outras versões do
+Python, como o Python 2 ou a versão do Python disponibilizada pelo
+Anaconda.
+
+Um exemplo dessa configuração (e algumas coisas a mais) pode ser visto
+no arquivo `~/.emacs` do [Walmes no
+Github](https://github.com/walmes/emacs/blob/master/dotemacs.el).
+
+## Instalando Elpy no Spacemacs
+
+O Spacemacs possui uma forma diferente de instalar pacotes, que funciona
+com a habilitação de *layers* no arquivo `~/.spacemacs`. Uma *layer*
+nada mais é do que uma coleção de pacotes úteis para determinada tarefa.
+Na verdade o processo de instalação é o mesmo, baixando e instalando
+pacotes através do MELPA, mas ao habilitar uma *layer* e reiniciar o
+Emacs, a instalação dos pacotes já é feita automaticamente.
+
+A *layer* "oficial" do Python para o Spacemacs é a `python`. No entanto,
+essa *layer* instala o `anaconda-mode`, que não é o que estamos
+procurando. O Elpy não possui uma *layer* "oficial" para o Spacemacs,
+pois possuir duas *layers* para o mesmo propósito poderia causar uma
+série de conflitos, e a escolha dos desenvolvedores do Spacemacs foi
+pelo `anaconda-mode`.
+
+No entanto, é possível instalar o Elpy no Spacemacs utilizando uma
+*layer* alternativa, disponibilizada nesse
+[repositório](https://github.com/rgemulla/spacemacs-layers). Basta
+baixar o diretório
+[elpy](https://github.com/rgemulla/spacemacs-layers/tree/master/+lang/elpy)
+e copiá-lo para `~/.emacs.d/private/`. Depois disso, habilite a *layer*
+`elpy` no seu `~/.spacemacs` (na seção `dotspacemacs/layers ()`). Ao
+reiniciar o Emacs, o Elpy será instalado e já estará habilitado para
+arquivos `.py`.
+
+A versão do Python que será executada no terminal também pode ser
+alterada da mesma forma como mencionado acima para o Emacs. Basta
+incluir o comando acima na seção `dotspacemacs/user-config ()` do seu
+`~/.spacemacs`.
+
+Como um exemplo de configuração, veja o meu arquivo `~/.spacemacs` no
+[Github](https://github.com/fernandomayer/spacemacs/blob/master/spacemacs.el).
+
+## Usando Elpy no Emacs
