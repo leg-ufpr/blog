@@ -4,12 +4,12 @@ author: "Fernando Mayer"
 date: "29 de Janeiro de 2018"
 tags: ["python", "emacs"]
 categories: ["editores"]
-#output:
-#  html_fragment
-#-- Usar enquanto edita.
 output:
-  html_document:
-    theme: flatly
+  html_fragment
+#-- Usar enquanto edita.
+#output:
+#  html_document:
+#    theme: flatly
 ---
 
 ```{r, include = FALSE}
