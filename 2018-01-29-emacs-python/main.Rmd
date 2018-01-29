@@ -30,7 +30,7 @@ linguagens. Abaixo está a divulgação que fizemos do grupo de estudos.
 Uma das primeiras coisas que analisamos, logo no início do curso, foram
 as IDEs (*Integrated Development Environment* ou Ambiente de
 Desenvolvimento Integrado) mais utilizadas para se escrever e executar
-códigos em Python. No mundo do R, sabemos que o onipresente
+códigos em Python. No mundo do R, sabemos que o
 [RStudio](https://www.rstudio.com) é o editor preferido da maioria dos
 usuários. No entanto, no mundo do Python não parece haver um único
 preferencial.
@@ -57,7 +57,13 @@ propósitos. Seu alto índice de uso aqui no laboratório remonta aos
 tempos de uma era pré-RStudio, quando a edição de scripts R no Linux só
 era possível de duas formas: copiando código de um editor qualquer e
 colando no terminal ou usando o módulo [ESS](http://ess.r-project.org)
-(*Emacs Speaks Statistics*) para o Emacs.
+(*Emacs Speaks Statistics*) para o Emacs. Claro que existiam opções
+intermediárias, como os plugins do R para o [Vim](http://www.vim.org) e
+para o [Gedit](https://wiki.gnome.org/Apps/Gedit), por exemplo, mas
+nenhuma se compara aos recursos do Emacs+ESS. A preferência pelo Emacs
+vai além dos recursos qye ele dispõe apenas para a linguagem R. O Emacs
+pode ser utilizado para editar diversas outras linguagens, como LaTeX,
+Markdown, HTML, CSS, Shell, C, C++, JSON, etc.
 
 Dito isso, naturalmente fomos em busca da solução para usar o Python de
 uma forma similar ao ESS no Emacs. O Emacs já possui um "modo" Python
@@ -99,7 +105,7 @@ sudo pip install yapf
 ```
 
 A instalação do Elpy deve ser feita através do MELPA (que é o
-procedimento padrão para se instalat qualquer pacote no Emacs). Para
+procedimento padrão para se instalar qualquer pacote no Emacs). Para
 habilitar o MELPA (se ainda não estiver habilitado) veja esse
 [link](https://www.emacswiki.org/emacs/MELPA). Feito isso, digite:
 
