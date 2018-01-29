@@ -1,9 +1,9 @@
 ---
 title: "Usando scripts Python no Emacs"
 author: "Fernando Mayer"
-date: "24 de Janeiro de 2018"
+date: "29 de Janeiro de 2018"
 tags: ["python", "emacs"]
-categories: ["python", "emacs"]
+categories: ["editores"]
 #output:
 #  html_fragment
 #-- Usar enquanto edita.
@@ -23,7 +23,9 @@ fazer em Python aquilo que fazemos rotineiramente em R. O resultado foi
 muito interessante e vimos que existe muita similaridade entre as duas
 linguagens. Abaixo está a divulgação que fizemos do grupo de estudos.
 
+<p align="center">
 <iframe src="https://www.facebook.com/plugins/post.php?href=https%3A%2F%2Fwww.facebook.com%2Fleg.ufpr%2Fposts%2F935006519988723&width=400&show_text=false&height=266&appId" width="400" height="266" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+</p>
 
 Uma das primeiras coisas que analisamos, logo no início do curso, foram
 as IDEs (*Integrated Development Environment* ou Ambiente de
