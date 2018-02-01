@@ -1,0 +1,174 @@
+---
+title: "blogpost"
+author: "Wagner Hugo Bonat"
+date: "January 31, 2018"
+output: html_fragment
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Computação científica com python: A perspectiva de um usuário R.
+
+Motivados pela criação do Curso de Especialização em 
+Data Science e Big Data o grupo LEG iniciou na semana de 15/01/2018
+um grupo de estudos em computação científica com a linguagem `python`.
+O objetivo do grupo foi discutir os principais aspectos da linguagem
+`python` com ênfase em manipulação/visualização de dados, tópicos em
+matemática aplicada e modelagem estatística. O grupo contou com a 
+participação de vários professores do DEST, alunos do bacharelado 
+em estatística e uma contribuição especial do Professor Nelson Dias
+da Engenharia Ambiental.
+
+O objetivo desta série de posts é relatar minhas primeiras impressões 
+sobre a linguagem `python` no que diz respeito a computação científica. 
+Como um usuário e desenvolvedor `R` há pelo menos $15$ anos é 
+praticamente inevitável não fazer uma comparação entre as linguagens. 
+O grupo de estudos em `python` constou de seis encontros onde foram
+discutidos os seguintes tópicos:
+
+  - Configuração do ambiente de progração;
+  - Estrutura básica de programação;
+  - Álgebra linear e otimização;
+  - Manipulação de dados;
+  - Visualização de dados;
+  - Modelagem estatística.
+
+Neste primeiro post eu vou discutir os principais aspectos da configuração
+do ambiente de programação `python` para computação científica. 
+No decorrer desta série serão abordados cada um dos tópicos acima.
+
+### Configuração do ambiente de programação
+
+Começar a programar em `python` em ambiente Linux é muito simples, uma
+vez que o próprio sistema já traz pelo menos duas versões da linguagem
+`python` instaladas. Neste caso basta iniciar o `console` Linux e digitar
+`python` que o `console python` estará disponível. 
+Entretando, o `console` padrão não traz nenhum recurso para ajudar na 
+programação, como indentação de código automática, *autocomplete*, 
+*code highlight* e etc. Isso não é diferente de usar o `R` direto no
+`prompt` de comandos Linux.
+
+A linguagem `python` conta com um grande conjunto de softwares para
+auxiliar no desenvolvimento de código. Entre eles eu destaco
+três: o [IPython](https://ipython.org/), o [Spyder](https://pythonhosted.org/spyder/)
+e a [Jupyter notebook](http://jupyter.org/) 
+
+O programa `IPython` é um poderoso `prompt` de comando para computação 
+interativa desenvolvido para a linguagem `python`. `IPython` oferece 
+suporte para visualização de dados interativa, sintaxe shell, 
+*tab completion* e permite arquivar o histórico de código. 
+Atualmente o projeto `IPython` cresceu e tornou-se um sistema multi 
+linguagens fornecendo suporte para linguagens como `Julia`, `R` entre 
+outras.
+
+Frequentemente o console `IPython` é usado em conjunto com o ambiente
+para desenvolvimento de computação científica `Spyder`. 
+O *workflow* é simples, o código `python` é escrito no editor `Spyder` e 
+executado através do console `IPython`. O editor `Spyder` fornece recursos 
+de edição avançados, testes interativos, *debugging* e *introspection features*. 
+
+`Jupyter notebook` é uma aplicação *web open-source* que permite criar 
+e compartilhar documentos que contêm código, equações, visualização e 
+textos explicativos. Aplicações em geral envolvem, *data cleaning* e 
+*transformation*, simulações numéricas, modelagem estatística, 
+visualização de dados, *machine learning* e muito mais.
+
+A combinação `Spyder + IPython` representa no universo `python` 
+o que o `RStudio` representa no universo `R`. O usuário digita o
+código no editor e executa em um terminal. Essa combinação parece
+mais adequada para o desenvolvimento de módulos e funções complexas.
+Já a combinação `Jupyter + IPython` representa em `python` o que era
+feito antigamente com o mecanismo `Sweave` em `R` e atualmente é feito
+pelo mecanismo `knitr` através de arquivos `.Rmd`. 
+Neste caso, o usuário pode mesclar entre código de programação e 
+linguagens de marcação como o `markdown` e até mesmo equações escritas 
+em `Latex`. Essa é uma ferramenta incrível para apresentar e discutir 
+resultados interativamente. Além disso, fornece opções para salvar o 
+*output* em diversos formatos como `.pdf` e `html` tornando muito fácil 
+construir, por exemplo, uma página *web* para apresentar os resultados 
+da análise.
+
+Uma diferença importante entre o `R` e o `python` é que grande parte
+dos métodos usados em computação científica não é nativo da linguagem.
+Assim a instalação de módulos extra (análogos a pacotes em `R`) é sempre 
+necessário. Módulos como o `numpy`, `pandas`, `scipy` e `statsmodels` 
+são fundamentais para computação científica em `python` e portanto 
+precisam ser instalados separadamente da linguagem em si.
+
+Apesar de ser possível instalar cada uma das ferramentas e módulos
+mencionados individualmente, uma forma mais simples de preparar o 
+ambiente de programação `python` é instalar o pacote [Anaconda](https://anaconda.org/). 
+Anaconda é uma distribuição *open-source* das linguagens `python` e `R` 
+para processamento de dados em larga escala, *predictive analytics* e 
+computação científica que objetiva simplificar o gerenciamento e 
+desenvolvimento de pacotes. As versões dos pacotes são gerenciadas pelo 
+sistema de gerenciamento de pacotes conda. O Anaconda já traz instalado,
+o `console IPython`, `Spyder` e a `Jupyter notebook`. Além disso, 
+todo um conjunto de módulos para computação científica em `python` 
+já vem junto com o Anaconda. Portanto, se você está começando com o
+`python` eu sugiro que instale direto o Anaconda e faça uso de todos
+os recursos de `python` para computação científica facilmente.
+
+Instalar o pacote Anaconda em distribuições Linux é muito fácil atráves 
+da linha de comando do Linux. Basta seguir os seguintes passos:
+
+   - Faça o *download* da versão Anaconda que deseja instalar. 
+   Neste exemplo vou usar a última versão (31/01/2018) disponível no 
+   endereço https://repo.continuum.io/archive/. Você também deve escolher 
+   entre a versão 2 ou 3 do `python`. Neste exemplo eu vou instalar a 
+   versão 3 para um computador 64 bits. Para fazer o download direto da 
+   linha de comando Linux vou usar o comando `wget`. 
+   Recomendo que faça todas essas operações no seu diretório `\home`.
+   
+```
+wget https://repo.continuum.io/archive/Anaconda3-5.0.1-Linux-x86_64.sh
+
+```
+   - Rode o script .sh para a instalação do Anaconda e siga as instruções. 
+   Na dúvida use a configuração *default*. 
+   Esse comando vai criar uma pasta chamada anaconda no diretório onde 
+   você está rodando a instalação.
+   
+```
+bash Anaconda3-5.0.1-Linux-x86_64.sh -b -p ~/anaconda
+
+```
+
+   - Precisamos colocar o Anaconda no caminho de busca para fácil acesso 
+   via a linha de comando Linux. Para isso incluímos o diretório do 
+   Anaconda em nosso arquivo `.bashrc`.
+
+```
+echo 'export PATH="~/anaconda/bin:$PATH"' >> ~/.bashrc 
+
+```
+   - Finalmente, atualizamos o arquivo `.bashrc` e abrimos a aplicação Anaconda.
+
+```
+source .bashrc
+anaconda-navigator
+
+```
+
+   - Podemos atualizar todos os pacotes do Anaconda via o gerenciador de pacotes conda.
+
+```
+conda update conda
+
+```
+
+Assim, terminamos o processo de instalação do pacote Anaconda e estamos 
+prontos para começar a programar em `python`. As instruções acima foram 
+obtidas através do *website* (https://medium.com/@GalarnykMichael/install-python-on-ubuntu-anaconda-65623042cb5a).
+
+Para quem começou a programar em `R` antes do surgimento do `RStudio`
+o `Emacs` combinado com o `ESS` era uma ferramenta muito popular.
+É também possível usar o `IPython` e mesmo a `jupyter notebook` dentro
+do `Emacs` para mais detalhes, veja o post do Professor Fernando de Pol
+Mayer (Colocar o link).
+
+No próximo post desta série discutiremos os aspectos básicos da programação
+em `python`.
+
