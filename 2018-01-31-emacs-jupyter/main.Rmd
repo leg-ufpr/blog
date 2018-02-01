@@ -16,10 +16,14 @@ output:
 # Carrega as configurações.
 source("../config/setup.R")
 ```
+
+
 # Jupyter Notebook
 
+Matéria escrita pelo colaborador Guilherme Hathy.
+
 Continuando o tema abordado pelo Professor Fernando Mayer no último
-[post](http://blog.leg.ufpr.br/archives/363), neste aboraremos o uso
+[post](http://blog.leg.ufpr.br/archives/363), neste abordaremos o uso
 do Jupyter, mais especificamente o Jupyter Notebook, com o
 Emacs.
 
@@ -36,7 +40,7 @@ documentos utilizando várias linguagens de programação, como R, Julia e Pytho
 ### Instalando o Jupyter
 
 Podemos instalar o Jupyter utilizando o próprio `pip`.
-Basta executar o código abaixo no terminal do Linux.
+Basta executar o comando abaixo no terminal do Linux.
 
 ```{sh, eval=FALSE}
 # Instala o Jupyter no Python 3 do sistema.
@@ -66,7 +70,7 @@ Para trabalhar com o Jupyter Notebook no Emacs utilizaremos o pacote
 [Ein](https://tkf.github.io/emacs-ipython-notebook/).
 
 A principal motivação para rodar o Jupyter no Emacs é a utilização de
-atalhos e ferramentas do proprio Emacs. Eu, por exemplo, costumo utilizar
+atalhos e ferramentas do próprio Emacs. Eu, por exemplo, costumo utilizar
 muito o pacote [multiple-cursors](https://github.com/magnars/multiple-cursors.el),
 que permite a edição de várias linhas do código simultaneamente.
 
@@ -87,7 +91,7 @@ C-s Ein
 ```
 
 e aperte <kbd>Enter</kbd> para instalar automaticamente. Por fim,
-abra seu `~/.emacs` e insira essas instruções para habilitar Ein:
+abra seu `~/.emacs` e insira essas instruções para habilitar o Ein:
 
 ```
 (package-initialize)
@@ -99,6 +103,10 @@ abra seu `~/.emacs` e insira essas instruções para habilitar Ein:
 
 Após inserir salve com <kbd>C-x C-s</kbd> e reinicie o Emacs.
 
+No Spacemacs, basta habilitar a layer ipython-notebook no 
+arquivo `~/.spacemacs` e reiniciar o programa. Dessa forma,
+ o Ein já será instalado e configurado automaticamente.
+
 ### Iniciando um Notebook no Emacs
 
 Após a instalação do pacote Ein, podemos começar à utilizar o Jupyter
@@ -108,7 +116,7 @@ Para começar devemos iniciar um servidor do Jupyter no computador.
 Para isso abrimos o Emacs e executamos o comando `M-x ein:jupyter-server-start`.
 Em seguida devemos colocar o local no qual esta instalado o Jupyter `Server Command:
 /usr/local/bin/jupyter` (Pasta padrão no Ubuntu) e por último colocamos
-o caminho para o diretório que queremos iniciar o Jupyter Notebook.
+no mini-buffer o caminho para o diretório que queremos iniciar o Jupyter Notebook.
 
 Se tudo ocorrer sem erro, o Emacs abrirá uma janela para a administração dos notebooks.
 
@@ -123,13 +131,16 @@ Para renomear o Notebook basta usar o comando
 C-x C-w
 ```
 
+Se já houver um arquivo do Jupyter Notebook (.ipynb) no seu sistema, 
+basta clicar sobre ele para que abra para edição.
+
 ## Principais Atalhos
 
 Separei alguns dos principais atalhos para a utilização do pacote Ein.
 A lista completa pode ser acessada no [link](https://tkf.github.io/emacs-ipython-notebook/#commands-keybinds).
 
-  - `C-c C-c` para executar a cell e permanecer nela.
-  - `M-RET` executa a cell e vai para a próxima, caso não tenha, ele cria uma.
-  - `C-c C-a` para inserir uma cell antes da cell na qual estamos.
-  - `M-up` ou `M-down` para trocar a cell de posição.
-  - Após criar uma nova cell, `C-c C-u m` faz ela virar uma markdown cell.
+  - `C-c C-c` para executar a célula e permanecer nela.
+  - `M-RET` executa a célula e vai para a próxima, caso não tenha, ele cria uma.
+  - `C-c C-a` para inserir uma célula antes da célula na qual estamos.
+  - `M-up` ou `M-down` para trocar a célula de posição.
+  - Após criar uma nova célula, `C-c C-u m` faz ela virar uma célula markdown.
