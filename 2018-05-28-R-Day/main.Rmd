@@ -1,0 +1,45 @@
+---
+title: '"R"eflexões: um pouco de história e experiências com o R'
+author: "LEG"
+categories: ["R Day"]
+tags: ["evento"]
+output:
+  html_fragment:
+    self_contained: yes
+#  html_document:
+#    theme: flatly
+---
+
+O R Day - encontro nacional de usuários do R - aconteceu na Universidade
+Federal do Paraná, em Curitiba/PR, na última terça-feira (22/05/2018)
+como evento satélite da 63ª RBras (Reunião Anual da Região Brasileira da
+Sociedade Internacional de Biometria).
+
+O professor Paulo Justiniano deu a conferência de abertura intitulada
+**"R"eflexões: um pouco de história e experiências com o R**. Nela ele
+conta sobre a história do projeto R, as ações que levaram a sucesso do
+R, a relação dele e da UFPR no processo de difusão do R no Brasil e
+sobre a filosofia de software livre e código aberto.
+
+<center>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/fnGvDEkjZy0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</center>
+
+O Prof. Paulo Justiniano Ribeiro Jr é a principal personalidade
+responsável pela difusão do R do Brasil. Durante o seu doutorado em
+Lancaster com o Professor Peter Diggle, o PJ desenvolveu o pacote
+[`geoR`](https://cran.r-project.org/package=geoR) que compôs o conjunto
+dos primeiros 100 do projeto R. Um ano depois, foi submetido o pacote
+[`geoRglm`](https://cran.r-project.org/package=geoRglm). Hoje existem
+mais de 12 mil pacotes oficiais no
+[CRAN](https://cran.r-project.org/web/packages/).
+
+Além disso, o Professor Paulo colocou no ar o primeiro espelho do CRAN
+da América do Sul, iniciantemente mantido pelo Departamento de
+Estatística da UFPR (DEST).  O DEST adotou amplamente o uso de software
+livre e o R como software para ensino de Estatística.
+
+A contribuição do PJ como desenvolvedor do projeto o R só
+perde para a sua contribuição como pessoa que inspirou e ensinou
+milhares de usuários de R no Brasil através da disponibilização de
+material didático, cursos e suporte nas listas de discussão.
