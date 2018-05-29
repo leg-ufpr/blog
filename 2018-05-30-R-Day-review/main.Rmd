@@ -1,0 +1,104 @@
+---
+title: "R Day - Encontro nacional de usuários do R"
+author: "LEG"
+categories: ["R Day"]
+tags: ["evento"]
+output:
+  html_fragment:
+    self_contained: yes
+#  html_document:
+#    theme: flatly
+---
+
+```{r, echo=FALSE, message=FALSE, results='hide'}
+dados <-
+    read.table("r-day-inscricao-v1-18-05-2018-17-38-41.csv",
+               header = TRUE, sep = ";", dec = ".",
+               stringsAsFactors = FALSE)
+str(dados)
+names(dados)
+dados <- dados[, c(1,2,4,5,6,8,9)]
+names(dados) <- c("cod", "nome", "cidade", "inst", "cat", "lat", "lon")
+str(dados)
+unique(dados$cidade)
+unique(dados$cat)
+unique(dados$lat)
+unique(dados$lon)
+unique(dados$nome)
+## Remove nomes duplicados
+dados <- dados[!duplicated(dados$nome), ]
+dim(dados)
+```
+
+O **R Day - Encontro nacional de usuários do R** aconteceu no dia 22 de
+maio de 2018 no Campus Jardim Botânico da UFPR. Foi o primeiro evento no
+Brasil oficialmente endossado pela **R Foundation**, fundação
+responsável por gerenciar todas as atividades relacionadas à linguagem
+R.
+
+O R Day foi concebido para ser um evento satélite da 63ª RBRAS (Reunião
+Anual da Região Brasileira da Sociedade Internacional de Biometria), que
+estava programada para acontecer na UFPR em Curitiba desde 2016. O R Day
+também foi criado como um evento de extensão da UFPR, portanto sem fins
+lucrativos e com inscrições gratuitas. Ao total,
+`r length(unique(dados$nome))` pessoas estavam inscritas. O gráfico
+abaixo mostra o número de inscritos por categoria (estudante,
+profissional ou outro segmento).
+
+```{r, echo=FALSE, message=FALSE, out.width='50%', fig.width=7,fig.height=5,fig.align='center'}
+library(dplyr)
+library(ggplot2)
+
+tab <-
+    dados %>%
+    group_by(cat) %>%
+    summarise(count = length(cat))
+
+ggplot(tab, aes(x = reorder(cat, count), y = count)) +
+    geom_bar(stat = "identity") +
+    coord_flip() +
+    ylab("Frequência") + xlab("")
+```
+
+Através do georeferenciamento das respostas, obtido através do
+formulário de inscrição, podemos ver que houveram inscritos de todas
+regiões do país. O mapa abaixo mostra a posição de
+`r sum(!is.na(dados$lat))` inscritos, já que nem todos compartilharam
+sua posição. No entanto, já da uma ideia da abrangência do evento.
+
+```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.width=6,fig.height=6,out.width='50%',cache=TRUE}
+library(ggmap)
+
+dados2 <- subset(dados, lon < 100)
+
+mapa <- get_map(location = c(lon = mean(dados2$lon),
+                             lat = mean(dados2$lat)),
+                zoom = 4, scale = 2)
+
+ggmap(mapa) +
+    geom_point(data = dados2, aes(x = lon, y = lat, alpha = 0.8),
+               size = 4) +
+    guides(fill = FALSE, alpha = FALSE, size = FALSE) +
+    scale_x_continuous(limits = c(-75, -30), expand = c(0,0)) +
+    scale_y_continuous(limits = c(-35, 5), expand = c(0,0)) +
+    xlab("Longitude") + ylab("Latitude")
+```
+
+
+O evento também foi pensado para ser guiado pela comunidade, por isso
+foram abertas propostas para apresentações orais e tutoriais. Foram
+recebidas 25 propostas para apresentações orais e 14 para tutoriais.
+Devido à restrição de tempo, foram selecionadas 18 apresentações orais e
+8 tutoriais.
+
+Além de todas estas apresentações, ocorreram 3 conferências
+principais, realizadas por pessoas convidadas pela comissão
+organizadora. O primeiro conferencista foi o professor do Departamento
+de Estatística da UFPR, e membro do LEG, Paulo Justiniano Ribeiro Jr.,
+que falou sobre a história do projeto R, e suas experiências pessoais,
+que se confundem com a história do R no Brasil. O segundo palestrante
+foi Rondon de Andrade Porto, do CNJ, que mostrou como o R é utilizado
+para gerar visualizações e relatórios dinâmicos no CNJ. A conferência de
+encerramento foi realizada pela Gabriela de Queiroz, fundadora do R
+Ladies, que contou como surgiu o R Ladies e o importante papel que essa
+comunidade tem na difusão do uso do R.
