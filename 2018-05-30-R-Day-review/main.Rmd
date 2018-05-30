@@ -4,10 +4,10 @@ author: "LEG"
 categories: ["R Day"]
 tags: ["evento"]
 output:
-#  html_fragment:
-#    self_contained: yes
-  html_document:
-    theme: flatly
+  html_fragment:
+    self_contained: yes
+#  html_document:
+#    theme: flatly
 ---
 
 ```{r, echo=FALSE, message=FALSE, results='hide'}
@@ -114,7 +114,7 @@ de Justiça (CNJ), que mostrou como o R é utilizado para gerar
 visualizações e relatórios dinâmicos no CNJ. A conferência de
 encerramento foi realizada pela Gabriela de Queiroz, fundadora do R
 Ladies, que contou como surgiu o R Ladies e o importante papel que essa
-comunidade tem na difusão do uso do R no Brail e no mundo.
+comunidade tem na difusão do uso do R no Brasil e no mundo.
 
 ```{r, echo=FALSE, out.width='80%',fig.align='center',fig.cap='Gabriela de Queiroz (R Ladies) em sua apresentação remota.'}
 knitr::include_graphics("gabriela.jpg")
