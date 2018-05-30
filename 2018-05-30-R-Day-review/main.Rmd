@@ -12,8 +12,8 @@ output:
 
 ```{r, echo=FALSE, message=FALSE, results='hide'}
 dados <-
-    read.table("r-day-inscricao-v1-18-05-2018-17-38-41.csv",
-               header = TRUE, sep = ";", dec = ".",
+    read.table("r-day-inscricao-v1-30-05-2018-17-55-05.csv",
+               header = TRUE, sep = ";", dec = ",",
                stringsAsFactors = FALSE)
 str(dados)
 names(dados)
@@ -30,15 +30,18 @@ dados <- dados[!duplicated(dados$nome), ]
 dim(dados)
 ```
 
-O **R Day - Encontro nacional de usuários do R** aconteceu no dia 22 de
-maio de 2018 no Campus Jardim Botânico da UFPR. Foi o primeiro evento no
-Brasil oficialmente endossado pela **R Foundation**, fundação
+O **[R Day - Encontro nacional de usuários do
+R](http://rday.leg.ufpr.br/)** aconteceu no dia 22 de maio de 2018 no
+Campus Jardim Botânico da UFPR. Foi o primeiro evento no Brasil
+oficialmente endossado pela **[The R
+Foundation](https://www.r-project.org/foundation/)**, fundação
 responsável por gerenciar todas as atividades relacionadas à linguagem
 R.
 
-O R Day foi concebido para ser um evento satélite da 63ª RBRAS (Reunião
-Anual da Região Brasileira da Sociedade Internacional de Biometria), que
-estava programada para acontecer na UFPR em Curitiba desde 2016. O R Day
+O R Day foi concebido para ser um evento satélite da **[63ª RBRAS (Reunião
+Anual da Região Brasileira da Sociedade Internacional de
+Biometria)](http://www.rbras.org.br/rbras63/)**, que
+estava programada para acontecer na UFPR, em Curitiba, desde 2016. O R Day
 também foi criado como um evento de extensão da UFPR, portanto sem fins
 lucrativos e com inscrições gratuitas. Ao total,
 `r length(unique(dados$nome))` pessoas estavam inscritas. O gráfico
@@ -61,10 +64,10 @@ ggplot(tab, aes(x = reorder(cat, count), y = count)) +
 ```
 
 Através do georeferenciamento das respostas, obtido através do
-formulário de inscrição, podemos ver que houveram inscritos de todas
+formulário de inscrição, podemos ver que houveram inscritos de todas as
 regiões do país. O mapa abaixo mostra a posição de
-`r sum(!is.na(dados$lat))` inscritos, já que nem todos compartilharam
-sua posição. No entanto, já da uma ideia da abrangência do evento.
+`r sum(!is.na(dados$lat))` inscritos, que compartilharam sua locaização.
+No entanto, já podemos ter uma ideia da abrangência do evento.
 
 ```{r,echo=FALSE,message=FALSE,warning=FALSE,fig.align='center',fig.width=6,fig.height=6,out.width='50%',cache=TRUE}
 library(ggmap)
@@ -84,21 +87,56 @@ ggmap(mapa) +
     xlab("Longitude") + ylab("Latitude")
 ```
 
-
 O evento também foi pensado para ser guiado pela comunidade, por isso
 foram abertas propostas para apresentações orais e tutoriais. Foram
 recebidas 25 propostas para apresentações orais e 14 para tutoriais.
-Devido à restrição de tempo, foram selecionadas 18 apresentações orais e
-8 tutoriais.
+Todas as propostas foram de excelente qualidade, mas devido à restrição
+de tempo, foram selecionadas 18 apresentações orais e 8 tutoriais, dos
+mais variados temas relacionados ao R.
 
-Além de todas estas apresentações, ocorreram 3 conferências
-principais, realizadas por pessoas convidadas pela comissão
-organizadora. O primeiro conferencista foi o professor do Departamento
-de Estatística da UFPR, e membro do LEG, Paulo Justiniano Ribeiro Jr.,
-que falou sobre a história do projeto R, e suas experiências pessoais,
-que se confundem com a história do R no Brasil. O segundo palestrante
-foi Rondon de Andrade Porto, do CNJ, que mostrou como o R é utilizado
-para gerar visualizações e relatórios dinâmicos no CNJ. A conferência de
+```{r, echo=FALSE, out.width='80%',fig.align='center',fig.cap='Prof. Paulo Justiniano (LEG) na palestra de abertura.'}
+knitr::include_graphics("pj_abertura.jpg")
+```
+
+Além de todas estas apresentações, ocorreram 3 conferências principais,
+realizadas por pessoas convidadas pela comissão organizadora. O primeiro
+conferencista foi o professor do Departamento de Estatística da UFPR, e
+membro do LEG, Paulo Justiniano Ribeiro Jr. O Prof. Paulo falou sobre a
+história do projeto R e suas experiências pessoais, que se confundem com
+a história do R no Brasil. Sua palestra virou [matéria aqui no
+blog](http://blog.leg.ufpr.br/archives/432), e o vídeo completa dessa
+apresentação também está disponível (ver link na matéria).
+
+O segundo palestrante foi Rondon de Andrade Porto, do Conselho Nacional
+de Justiça (CNJ), que mostrou como o R é utilizado para gerar
+visualizações e relatórios dinâmicos no CNJ. A conferência de
 encerramento foi realizada pela Gabriela de Queiroz, fundadora do R
 Ladies, que contou como surgiu o R Ladies e o importante papel que essa
-comunidade tem na difusão do uso do R.
+comunidade tem na difusão do uso do R no Brail e no mundo.
+
+```{r, echo=FALSE, out.width='80%',fig.align='center',fig.cap='Gabriela de Queiroz (R Ladies) em sua apresentação remota.'}
+knitr::include_graphics("gabriela.jpg")
+```
+
+Pelo número de participantes e o *feedback* positivo que temos recebido,
+vemos que existe uma demanda muito grande por esse tipo de evento no
+Brasil. Hoje em dia a comunidade que usa o R no país é bastante grande e
+diversificada. Por isso, o objetivo é tornar o R Day um evento anual à
+nível nacional. Além disso, contando com a tradição do uso e difusão do
+R pela UFPR, esperamos em algum momento também sediar uma useR!, o
+evento internacional "oficial" do R.
+
+```{r, echo=FALSE, out.width='80%',fig.align='center',fig.cap='Participantes do R Day que ficaram até o final do evento.'}
+knitr::include_graphics("foto_oficial.jpg")
+```
+
+Você pode ver mais fotos do evento neste
+[álbum](https://www.facebook.com/media/set/?set=a.1010180265804681.1073741833.934474600041915&type=1&l=b06fdaad14).
+Os materias (slides, scripts, etc) utilizados pelos apresentadores estão
+disponíveis nesta [página](http://rday.leg.ufpr.br/materiais.html).
+
+Agradecemos à todos que compareceram, e especialmente aos apresentadores
+que se disponibilizaram e fizeram o evento acontecer da melhor forma
+possível. Também agradecemos aos nossos
+[patrocinadores](http://rday.leg.ufpr.br/apoio.html) pelo apoio
+financeiro, e à "The R Foundation" pelo reconhecimento do R Day.
