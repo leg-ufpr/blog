@@ -5,7 +5,7 @@ categories: ["R Day"]
 tags: ["evento"]
 output:
   html_fragment:
-    self_contained: yes
+    self_contained: no
 #  html_document:
 #    theme: flatly
 ---
